@@ -17,10 +17,20 @@ class Workspace {
   }
 
   void markAsCompleted({required String taskId}) {
-    tasks.firstWhereOrNull((task) => task.id == taskId)?.isCompleted = true;
+    final removedTask = removeTask(taskId: taskId);
+    if (removedTask != null) tasks.insert(0, removedTask.makeComplete());
   }
 
   void markAsWorkInProgress({required String taskId}) {
-    tasks.firstWhereOrNull((task) => task.id == taskId)?.isCompleted = false;
+    final removedTask = removeTask(taskId: taskId);
+    if (removedTask != null) tasks.insert(0, removedTask.makeIncomplete());
+  }
+
+  Task? removeTask({required String taskId}) {
+    final task = findTask(taskId: taskId);
+    if (task == null) return null;
+
+    tasks.removeWhere((kTask) => kTask.id == task.id);
+    return task;
   }
 }
