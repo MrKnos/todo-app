@@ -13,6 +13,7 @@ class LightTheme extends app_theme.AppTheme {
         subtitle1: _subtitle1,
         button: _button,
         overline: _overLine,
+        caption: _caption,
       ),
       colorScheme: const ColorScheme.light(
         primary: Colors.amber,
@@ -79,6 +80,11 @@ class LightTheme extends app_theme.AppTheme {
   );
   static const TextStyle _overLine = TextStyle(
     color: Colors.black,
+    fontSize: 10,
+    fontFamily: _defaultFontFamily,
+  );
+  static const TextStyle _caption = TextStyle(
+    color: Colors.grey,
     fontSize: 10,
     fontFamily: _defaultFontFamily,
   );
