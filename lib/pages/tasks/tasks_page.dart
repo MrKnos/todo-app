@@ -1,19 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intersperse/intersperse.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
-import 'package:todo_app/mock.dart';
+import 'package:todo_app/models/workspace.dart';
+import 'package:todo_app/pages/tasks/bloc/task_page_bloc.dart';
 import 'package:todo_app/pages/tasks/tasks_page_presenter.dart';
-import 'package:todo_app/widgets/check_box.dart';
+import 'package:todo_app/pages/workspace/bloc/workspace_page_body_bloc.dart'
+    as page_body;
+import 'package:todo_app/pages/workspace/workspace_page_body.dart';
 
 class TasksPage extends StatelessWidget {
   const TasksPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<TaskPageBloc, TaskPageState>(
+      builder: (context, state) {
+        if (state is LoadSuccessState) {
+          return _buildLoadSuccess(
+            context,
+            presenter: state.presenter,
+            workspaces: state.workspaces,
+          );
+        } else {
+          return const SizedBox.expand(
+            child: Center(
+              child: Text('Something went wrong.'),
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildLoadSuccess(
+    BuildContext context, {
+    required TasksPagePresenter presenter,
+    required List<Workspace> workspaces,
+  }) {
     final theme = context.read<ThemeCubit>().state;
     final textStyle = theme.material.textTheme;
-    final presenter = Mock.tasksPagePresenter;
 
     return DefaultTabController(
       length: presenter.workspaces.length,
@@ -35,7 +60,7 @@ class TasksPage extends StatelessWidget {
                 ...presenter.workspaces.map(
                   (workspace) => Tab(
                     child: Text(
-                      workspace.title,
+                      workspace.name,
                       style: textStyle.button,
                     ),
                   ),
@@ -46,8 +71,8 @@ class TasksPage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            ...presenter.workspaces.map(
-              (workspace) => _buildWorkspace(
+            ...workspaces.map(
+              (workspace) => _buildWorkSpacePageBody(
                 context,
                 workspace: workspace,
               ),
@@ -58,88 +83,14 @@ class TasksPage extends StatelessWidget {
     );
   }
 
-  Widget _buildWorkspace(
+  Widget _buildWorkSpacePageBody(
     BuildContext context, {
-    required WorkspacePresenter workspace,
+    required Workspace workspace,
   }) {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        if (workspace.workInProgressTasks.isNotEmpty)
-          _buildWorkInProgressTasks(context, workspace: workspace),
-        if (workspace.completedTasks.isNotEmpty) ...[
-          const Divider(height: 32, color: Colors.black),
-          _buildCompletedTasks(context, workspace: workspace),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildWorkInProgressTasks(
-    BuildContext context, {
-    required WorkspacePresenter workspace,
-  }) {
-    return Column(
-      children: [
-        ...workspace.workInProgressTasks.map(
-          (task) => _buildTaskTile(context, task: task),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCompletedTasks(
-    BuildContext context, {
-    required WorkspacePresenter workspace,
-  }) {
-    final theme = context.read<ThemeCubit>().state;
-    final textTheme = theme.material.textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Completed Tasks',
-          style: textTheme.headline3,
-        ),
-        const SizedBox(height: 16),
-        ...workspace.completedTasks
-            .map((task) => _buildTaskTile(context, task: task))
-            .intersperse(const SizedBox(height: 16)),
-      ],
-    );
-  }
-
-  Widget _buildTaskTile(
-    BuildContext context, {
-    required TaskPresenter task,
-  }) {
-    final theme = context.read<ThemeCubit>().state;
-    final textTheme = theme.material.textTheme;
-
-    return Row(
-      children: [
-        CheckBox(isChecked: task.isCompleted),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                task.title,
-                style: textTheme.bodyText1,
-                maxLines: 2,
-              ),
-              if (task.description != null)
-                Text(
-                  task.description ?? '',
-                  style: textTheme.caption,
-                  maxLines: 1,
-                ),
-            ],
-          ),
-        ),
-      ],
+    return BlocProvider<page_body.WorkspacePageBodyBloc>(
+      create: (context) => page_body.WorkspacePageBodyBloc()
+        ..add(page_body.StartedEvent(workspace: workspace)),
+      child: const WorkspacePageBody(),
     );
   }
 }

@@ -1,39 +1,18 @@
-import 'package:collection/collection.dart';
+import 'package:todo_app/models/workspace.dart';
+import 'package:todo_app/pages/workspace/workspace_page_presenter.dart';
 
 class TasksPagePresenter {
   TasksPagePresenter({
     required this.workspaces,
   });
 
-  final List<WorkspacePresenter> workspaces;
-}
-
-class WorkspacePresenter {
-  WorkspacePresenter({
-    required this.title,
-    required List<TaskPresenter> tasks,
-  }) : _tasks = tasks;
-
-  final String title;
-  final List<TaskPresenter> _tasks;
-
-  List<TaskPresenter> get completedTasks {
-    return _tasks.where((task) => task.isCompleted).toList();
+  factory TasksPagePresenter.fromModel({
+    required List<Workspace> workspaces,
+  }) {
+    return TasksPagePresenter(
+      workspaces: workspaces.map(WorkspacePagePresenter.fromModel).toList(),
+    );
   }
 
-  List<TaskPresenter> get workInProgressTasks {
-    return _tasks.whereNot((task) => task.isCompleted).toList();
-  }
-}
-
-class TaskPresenter {
-  TaskPresenter({
-    required this.title,
-    required this.isCompleted,
-    this.description,
-  });
-
-  final String title;
-  final String? description;
-  final bool isCompleted;
+  final List<WorkspacePagePresenter> workspaces;
 }
