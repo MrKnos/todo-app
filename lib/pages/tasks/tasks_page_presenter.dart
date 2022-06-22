@@ -29,13 +29,11 @@ class WorkspacePresenter {
 class TaskPresenter {
   TaskPresenter({
     required this.title,
-    required this.dueDate,
     required this.isCompleted,
     this.description,
   });
 
   final String title;
   final String? description;
-  final DateTime dueDate;
   final bool isCompleted;
 }
