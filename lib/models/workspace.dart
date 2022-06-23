@@ -33,4 +33,6 @@ class Workspace {
     tasks.removeWhere((kTask) => kTask.id == task.id);
     return task;
   }
+
+  void addTask(Task task) => tasks.insert(0, task);
 }

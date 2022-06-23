@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
 import 'package:todo_app/pages/tasks/bloc/task_page_bloc.dart';
 import 'package:todo_app/pages/tasks/tasks_page.dart';
@@ -24,6 +25,11 @@ class App extends StatelessWidget {
             themeMode: theme.mode,
             theme: theme.material,
             debugShowCheckedModeBanner: false,
+            localizationsDelegates: const [
+              FormBuilderLocalizations.delegate,
+            ],
+            supportedLocales:
+                FormBuilderLocalizations.delegate.supportedLocales,
             home: BlocProvider(
               create: (context) => TaskPageBloc()..add(StartedEvent()),
               child: const TasksPage(),
