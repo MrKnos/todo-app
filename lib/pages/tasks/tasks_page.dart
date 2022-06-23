@@ -71,7 +71,11 @@ class TasksPage extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () => _showModalBottomSheet(
+            context,
+            heightFactor: 0.2,
+            child: Container(),
+          ),
           child: const Icon(Icons.add, size: 30),
         ),
         child: TabBarView(
@@ -96,6 +100,50 @@ class TasksPage extends StatelessWidget {
       create: (context) => page_body.WorkspacePageBodyBloc()
         ..add(page_body.StartedEvent(workspace: workspace)),
       child: const WorkspacePageBody(),
+    );
+  }
+
+  void _showModalBottomSheet(
+    BuildContext context, {
+    required double heightFactor,
+    required Widget child,
+  }) {
+    final theme = context.read<ThemeCubit>().state;
+
+    showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: theme.material.colorScheme.background,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      builder: (context) => FractionallySizedBox(
+        heightFactor: heightFactor,
+        child: DraggableScrollableSheet(
+          initialChildSize: 1,
+          minChildSize: 0.98,
+          builder: (context, controller) => Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: theme.material.colorScheme.background,
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 12),
+                Container(
+                  width: 60,
+                  height: 4,
+                  color: Colors.grey.shade400,
+                ),
+                const SizedBox(height: 32),
+                Expanded(child: child),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
