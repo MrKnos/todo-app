@@ -24,15 +24,9 @@ class App extends StatelessWidget {
             themeMode: theme.mode,
             theme: theme.material,
             debugShowCheckedModeBanner: false,
-            home: Container(
-              color: Colors.amber,
-              child: SafeArea(
-                bottom: false,
-                child: BlocProvider(
-                  create: (context) => TaskPageBloc()..add(StartedEvent()),
-                  child: const TasksPage(),
-                ),
-              ),
+            home: BlocProvider(
+              create: (context) => TaskPageBloc()..add(StartedEvent()),
+              child: const TasksPage(),
             ),
           );
         },

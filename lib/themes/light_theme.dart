@@ -15,9 +15,10 @@ class LightTheme extends app_theme.AppTheme {
         overline: _overLine,
         caption: _caption,
       ),
-      colorScheme: const ColorScheme.light(
+      colorScheme: ColorScheme.light(
         primary: Colors.amber,
         secondary: Colors.amber,
+        background: Colors.grey.shade100,
       ),
       iconTheme: const IconThemeData(
         color: Colors.grey,

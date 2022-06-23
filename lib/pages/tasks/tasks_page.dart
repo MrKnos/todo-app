@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
 import 'package:todo_app/models/workspace.dart';
+import 'package:todo_app/pages/page_scaffold.dart';
 import 'package:todo_app/pages/tasks/bloc/task_page_bloc.dart';
 import 'package:todo_app/pages/tasks/tasks_page_presenter.dart';
 import 'package:todo_app/pages/workspace/bloc/workspace_page_body_bloc.dart'
@@ -42,7 +43,7 @@ class TasksPage extends StatelessWidget {
 
     return DefaultTabController(
       length: presenter.workspaces.length,
-      child: Scaffold(
+      child: PageScaffold(
         appBar: AppBar(
           centerTitle: true,
           title: Text(
@@ -69,7 +70,11 @@ class TasksPage extends StatelessWidget {
             ),
           ),
         ),
-        body: TabBarView(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: const Icon(Icons.add, size: 30),
+        ),
+        child: TabBarView(
           children: [
             ...workspaces.map(
               (workspace) => _buildWorkSpacePageBody(
@@ -78,10 +83,6 @@ class TasksPage extends StatelessWidget {
               ),
             ),
           ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: const Icon(Icons.add, size: 30),
         ),
       ),
     );
