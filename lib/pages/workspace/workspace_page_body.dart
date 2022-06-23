@@ -50,7 +50,7 @@ class WorkspacePageBody extends StatelessWidget {
     return Column(
       children: [
         ...workspace.workInProgressTasks
-            .map((task) => _buildTaskTile(context, task: task))
+            .map((task) => _buildTask(context, task: task))
             .intersperse(const SizedBox(height: 16)),
       ],
     );
@@ -72,13 +72,13 @@ class WorkspacePageBody extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         ...workspace.completedTasks
-            .map((task) => _buildTaskTile(context, task: task))
+            .map((task) => _buildTask(context, task: task))
             .intersperse(const SizedBox(height: 16)),
       ],
     );
   }
 
-  Widget _buildTaskTile(
+  Widget _buildTask(
     BuildContext context, {
     required TaskPresenter task,
   }) {
@@ -99,13 +99,21 @@ class WorkspacePageBody extends StatelessWidget {
             children: [
               Text(
                 task.title,
-                style: textTheme.bodyText1,
+                style: textTheme.bodyText1?.copyWith(
+                  decoration:
+                      task.isCompleted ? TextDecoration.lineThrough : null,
+                  decorationThickness: 2,
+                ),
                 maxLines: 2,
               ),
               if (task.description != null) ...[
                 Text(
                   task.description ?? '',
-                  style: textTheme.caption,
+                  style: textTheme.caption?.copyWith(
+                    decoration:
+                        task.isCompleted ? TextDecoration.lineThrough : null,
+                    decorationThickness: 2,
+                  ),
                   maxLines: 1,
                 ),
               ],
