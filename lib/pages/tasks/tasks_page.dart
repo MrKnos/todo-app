@@ -79,6 +79,10 @@ class TasksPage extends StatelessWidget {
             ),
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          child: const Icon(Icons.add, size: 30),
+        ),
       ),
     );
   }

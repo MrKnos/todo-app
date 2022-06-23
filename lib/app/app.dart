@@ -27,6 +27,7 @@ class App extends StatelessWidget {
             home: Container(
               color: Colors.amber,
               child: SafeArea(
+                bottom: false,
                 child: BlocProvider(
                   create: (context) => TaskPageBloc()..add(StartedEvent()),
                   child: const TasksPage(),
