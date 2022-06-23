@@ -16,11 +16,7 @@ class WorkspacePageBody extends StatelessWidget {
         if (state is LoadSuccessState) {
           return _buildLoadSuccess(context, workspace: state.presenter);
         } else {
-          return const SizedBox.expand(
-            child: Center(
-              child: Text('Something went wrong.'),
-            ),
-          );
+          return Container();
         }
       },
     );
