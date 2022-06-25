@@ -63,7 +63,7 @@ class _TasksPageState extends State<TasksPage> {
           floatingActionButton: FloatingActionButton(
             onPressed: () => showTaskFormModalSheet(
               context,
-              onFormSubmitted: (task) => _createNewTask(
+              onSubmitForm: (task) => _createNewTask(
                 context,
                 workspaces: workspaces,
                 task: task,
@@ -128,7 +128,7 @@ class _TasksPageState extends State<TasksPage> {
     return GestureDetector(
       onTap: () => showWorkspaceFormModalSheet(
         context,
-        onFormSubmitted: (workspace) => bloc.add(
+        onSubmitForm: (workspace) => bloc.add(
           WorkspaceCreatedEvent(workspace: workspace),
         ),
       ),

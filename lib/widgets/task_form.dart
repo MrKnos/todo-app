@@ -8,12 +8,12 @@ import 'package:todo_app/models/task.dart';
 
 class TaskForm extends StatefulWidget {
   const TaskForm({
-    required this.onFormSubmitted,
+    required this.onSubmitForm,
     this.initialTask,
     Key? key,
   }) : super(key: key);
 
-  final void Function(Task) onFormSubmitted;
+  final void Function(Task) onSubmitForm;
   final Task? initialTask;
 
   @override
@@ -34,7 +34,7 @@ class _TaskFormState extends State<TaskForm> {
           description: newTask.description,
         );
 
-        widget.onFormSubmitted(updatedTask ?? newTask);
+        widget.onSubmitForm(updatedTask ?? newTask);
       }
     }
   }

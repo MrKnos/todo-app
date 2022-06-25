@@ -101,7 +101,7 @@ class WorkspacePageBody extends StatelessWidget {
             onTap: () => showTaskFormModalSheet(
               context,
               initialTask: Task.fromPresenter(task),
-              onFormSubmitted: (task) => bloc.add(
+              onSubmitForm: (task) => bloc.add(
                 TaskEditedEvent(task: task),
               ),
             ),

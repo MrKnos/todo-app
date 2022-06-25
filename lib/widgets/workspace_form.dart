@@ -8,12 +8,12 @@ import 'package:todo_app/models/workspace.dart';
 
 class WorkspaceForm extends StatefulWidget {
   const WorkspaceForm({
-    required this.onFormSubmitted,
+    required this.onSubmitForm,
     this.initialWorkspace,
     Key? key,
   }) : super(key: key);
 
-  final void Function(Workspace) onFormSubmitted;
+  final void Function(Workspace) onSubmitForm;
   final Workspace? initialWorkspace;
 
   @override
@@ -28,7 +28,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
       final fields = _formKey.currentState?.value;
 
       if (fields != null) {
-        widget.onFormSubmitted(Workspace.fromFormFields(fields));
+        widget.onSubmitForm(Workspace.fromFormFields(fields));
       }
     }
   }
