@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:todo_app/models/form/workspace_form_field_names.dart';
 import 'package:todo_app/models/task.dart';
 
 class Workspace {
@@ -11,6 +12,16 @@ class Workspace {
   final String id;
   final String name;
   final List<Task> tasks;
+
+  factory Workspace.fromFormFields(Map<String, dynamic> fields) {
+    assert(fields[WorkspaceFormFieldNames.name] != null);
+
+    return Workspace(
+      id: DateTime.now().toString(),
+      name: fields[WorkspaceFormFieldNames.name]?.toString() ?? '-',
+      tasks: [],
+    );
+  }
 
   Task? findTask({required String taskId}) {
     return tasks.firstWhereOrNull((task) => task.id == taskId);

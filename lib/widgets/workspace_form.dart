@@ -3,51 +3,46 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
-import 'package:todo_app/models/form/task_form_field_names.dart';
-import 'package:todo_app/models/task.dart';
+import 'package:todo_app/models/form/workspace_form_field_names.dart';
+import 'package:todo_app/models/workspace.dart';
 
-class TaskForm extends StatefulWidget {
-  const TaskForm({
+class WorkspaceForm extends StatefulWidget {
+  const WorkspaceForm({
     required this.onFormSubmitted,
-    this.initialTask,
+    this.initialWorkspace,
     Key? key,
   }) : super(key: key);
 
-  final void Function(Task) onFormSubmitted;
-  final Task? initialTask;
+  final void Function(Workspace) onFormSubmitted;
+  final Workspace? initialWorkspace;
 
   @override
-  State<TaskForm> createState() => _TaskFormState();
+  State<WorkspaceForm> createState() => _WorkspaceFormState();
 }
 
-class _TaskFormState extends State<TaskForm> {
+class _WorkspaceFormState extends State<WorkspaceForm> {
   final _formKey = GlobalKey<FormBuilderState>();
 
-  void _onSubmitTask(BuildContext context) {
+  void _onSubmitWorkspaceForm(BuildContext context) {
     if (_formKey.currentState?.saveAndValidate() ?? false) {
       final fields = _formKey.currentState?.value;
 
       if (fields != null) {
-        final newTask = Task.fromFormFields(fields);
-        final updatedTask = widget.initialTask?.copyWith(
-          title: newTask.title,
-          description: newTask.description,
-        );
-
-        widget.onFormSubmitted(updatedTask ?? newTask);
+        widget.onFormSubmitted(Workspace.fromFormFields(fields));
       }
     }
   }
 
-  void _focusTaskTitleFieldWhenBuilt() {
+  void _focusWorkspaceNameFieldWhenBuilt() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _formKey.currentState?.fields[TaskFormFieldNames.title]?.requestFocus();
+      _formKey.currentState?.fields[WorkspaceFormFieldNames.name]
+          ?.requestFocus();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    _focusTaskTitleFieldWhenBuilt();
+    _focusWorkspaceNameFieldWhenBuilt();
     final theme = context.read<ThemeCubit>().state;
     final textStyle = theme.material.textTheme;
 
@@ -61,27 +56,15 @@ class _TaskFormState extends State<TaskForm> {
             child: Column(
               children: [
                 FormBuilderTextField(
-                  initialValue: widget.initialTask?.title,
+                  initialValue: widget.initialWorkspace?.name,
                   style: textStyle.bodyText1,
-                  name: TaskFormFieldNames.title,
+                  name: WorkspaceFormFieldNames.name,
                   decoration: InputDecoration(
-                    label: Text('Task', style: textStyle.headline3),
+                    label: Text('Workspace', style: textStyle.headline3),
                   ),
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.next,
                   validator: FormBuilderValidators.required(),
-                ),
-                const SizedBox(height: 16),
-                FormBuilderTextField(
-                  initialValue: widget.initialTask?.description,
-                  style: textStyle.bodyText1,
-                  autovalidateMode: AutovalidateMode.always,
-                  name: TaskFormFieldNames.description,
-                  decoration: InputDecoration(
-                    label: Text('Description', style: textStyle.headline3),
-                  ),
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.next,
                 ),
               ],
             ),
@@ -91,7 +74,7 @@ class _TaskFormState extends State<TaskForm> {
             children: [
               const Spacer(),
               ElevatedButton(
-                onPressed: () => _onSubmitTask(context),
+                onPressed: () => _onSubmitWorkspaceForm(context),
                 child: Text('OK', style: textStyle.button),
               ),
             ],

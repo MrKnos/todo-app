@@ -55,39 +55,11 @@ class _TasksPageState extends State<TasksPage> {
     required List<Workspace> workspaces,
     required List<page_body.WorkspacePageBodyBloc> workspaceBlocs,
   }) {
-    final theme = context.read<ThemeCubit>().state;
-    final textStyle = theme.material.textTheme;
-
     return DefaultTabController(
       length: presenter.workspaces.length,
       child: Builder(builder: (context) {
         return PageScaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text(
-              'Tasks',
-              style: textStyle.headline1?.copyWith(
-                height: 2,
-              ),
-            ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(40),
-              child: TabBar(
-                isScrollable: true,
-                indicatorColor: Colors.black,
-                tabs: [
-                  ...presenter.workspaces.map(
-                    (workspace) => Tab(
-                      child: Text(
-                        workspace.name,
-                        style: textStyle.button,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          appBar: _buildAppBar(context, presenter: presenter),
           floatingActionButton: FloatingActionButton(
             onPressed: () => showTaskFormModalSheet(
               context,
@@ -111,6 +83,76 @@ class _TasksPageState extends State<TasksPage> {
           ),
         );
       }),
+    );
+  }
+
+  AppBar _buildAppBar(
+    BuildContext context, {
+    required TasksPagePresenter presenter,
+  }) {
+    final theme = context.read<ThemeCubit>().state;
+    final textStyle = theme.material.textTheme;
+
+    return AppBar(
+      centerTitle: true,
+      title: Text(
+        'Tasks',
+        style: textStyle.headline1,
+      ),
+      actions: [_buildCreateNewWorkspaceButton(context)],
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(40),
+        child: TabBar(
+          isScrollable: true,
+          indicatorColor: Colors.black,
+          tabs: [
+            ...presenter.workspaces.map(
+              (workspace) => Tab(
+                child: Text(
+                  workspace.name,
+                  style: textStyle.button,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCreateNewWorkspaceButton(BuildContext context) {
+    final theme = context.read<ThemeCubit>().state;
+    final textStyle = theme.material.textTheme;
+
+    return GestureDetector(
+      onTap: () => showWorkspaceFormModalSheet(
+        context,
+        onFormSubmitted: (workspace) {
+          // TODO(Kittipong): Bind event when workspace created.
+        },
+      ),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+          border: Border.all(),
+        ),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.add,
+              color: Colors.black,
+            ),
+            Text(
+              'Workspace',
+              style: textStyle.button?.copyWith(
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

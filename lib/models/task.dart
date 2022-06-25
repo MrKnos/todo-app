@@ -1,4 +1,4 @@
-import 'package:todo_app/models/task_form.dart';
+import 'package:todo_app/models/form/task_form_field_names.dart';
 import 'package:todo_app/pages/workspace/workspace_page_presenter.dart';
 
 class Task {
