@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
 import 'package:todo_app/models/task.dart';
-import 'package:todo_app/models/task_form.dart';
 import 'package:todo_app/models/workspace.dart';
 import 'package:todo_app/pages/page_scaffold.dart';
 import 'package:todo_app/pages/tasks/bloc/task_page_bloc.dart';
@@ -22,23 +19,16 @@ class TasksPage extends StatefulWidget {
 }
 
 class _TasksPageState extends State<TasksPage> {
-  final _formKey = GlobalKey<FormBuilderState>();
-
-  void _onSubmitCreateTask(
+  void _createNewTask(
     BuildContext context, {
-    required String workspaceId,
+    required List<Workspace> workspaces,
+    required Task task,
   }) {
-    if (_formKey.currentState?.saveAndValidate() ?? false) {
-      final fields = _formKey.currentState?.value;
+    final index = DefaultTabController.of(context)?.index ?? 0;
+    final workspaceId = workspaces[index].id;
+    final bloc = context.read<TaskPageBloc>();
 
-      if (fields != null) {
-        final task = Task.fromFormFields(fields);
-        final bloc = context.read<TaskPageBloc>();
-
-        bloc.add(TaskCreatedEvent(workspaceId: workspaceId, task: task));
-        Navigator.pop(context);
-      }
-    }
+    bloc.add(TaskCreatedEvent(workspaceId: workspaceId, task: task));
   }
 
   @override
@@ -99,9 +89,13 @@ class _TasksPageState extends State<TasksPage> {
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () => _showTaskFormModalSheet(
+            onPressed: () => showTaskFormModalSheet(
               context,
-              workspaces: workspaces,
+              onFormSubmitted: (task) => _createNewTask(
+                context,
+                workspaces: workspaces,
+                task: task,
+              ),
             ),
             child: const Icon(Icons.add, size: 30),
           ),
@@ -127,83 +121,6 @@ class _TasksPageState extends State<TasksPage> {
     return BlocProvider<page_body.WorkspacePageBodyBloc>.value(
       value: workspaceBloc,
       child: const WorkspacePageBody(),
-    );
-  }
-
-  void _showTaskFormModalSheet(
-    BuildContext context, {
-    required List<Workspace> workspaces,
-  }) {
-    showAppModalBottomSheet(
-      context,
-      heightFactor: 0.68,
-      child: _buildTaskCreatorForm(context, workspaces: workspaces),
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _formKey.currentState?.fields[TaskFormFieldNames.title]?.requestFocus();
-    });
-  }
-
-  Widget _buildTaskCreatorForm(
-    BuildContext context, {
-    required List<Workspace> workspaces,
-  }) {
-    final theme = context.read<ThemeCubit>().state;
-    final textStyle = theme.material.textTheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        children: [
-          FormBuilder(
-            key: _formKey,
-            autovalidateMode: AutovalidateMode.disabled,
-            child: Column(
-              children: [
-                FormBuilderTextField(
-                  style: textStyle.bodyText1,
-                  name: TaskFormFieldNames.title,
-                  decoration: InputDecoration(
-                    label: Text('Task', style: textStyle.headline3),
-                  ),
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.next,
-                  validator: FormBuilderValidators.required(),
-                ),
-                const SizedBox(height: 16),
-                FormBuilderTextField(
-                  style: textStyle.bodyText1,
-                  autovalidateMode: AutovalidateMode.always,
-                  name: TaskFormFieldNames.description,
-                  decoration: InputDecoration(
-                    label: Text('Description', style: textStyle.headline3),
-                  ),
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.next,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              const Spacer(),
-              ElevatedButton(
-                onPressed: () {
-                  final index = DefaultTabController.of(context)?.index ?? 0;
-
-                  _onSubmitCreateTask(
-                    context,
-                    workspaceId: workspaces[index].id,
-                  );
-                },
-                child: Text('OK', style: textStyle.button),
-              ),
-            ],
-          )
-        ],
-      ),
     );
   }
 }

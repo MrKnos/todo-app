@@ -38,6 +38,6 @@ class TaskPageBloc extends Bloc<_Event, _State> {
         .firstWhereOrNull((workspace) => workspace.id == event.workspaceId)
         ?.addTask(event.task);
 
-    emit(LoadSuccessState(workspaces: List.of(kState.workspaces)));
+    emit(LoadSuccessState(workspaces: kState.workspaces));
   }
 }
