@@ -14,3 +14,9 @@ class TaskCheckedEvent extends _Event {
 
   final String taskId;
 }
+
+class TaskEditedEvent extends _Event {
+  TaskEditedEvent({required this.task});
+
+  final Task task;
+}

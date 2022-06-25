@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_app/models/task.dart';
 import 'package:todo_app/models/workspace.dart';
 import 'package:todo_app/pages/workspace/workspace_page_presenter.dart';
 
@@ -13,6 +14,7 @@ class WorkspacePageBodyBloc extends Bloc<_Event, _State> {
   WorkspacePageBodyBloc() : super(InitialState()) {
     on<StartedEvent>(_onStartedEvent);
     on<TaskCheckedEvent>(_onTaskCheckedEvent);
+    on<TaskEditedEvent>(_onTaskEditedEvent);
   }
 
   void _onStartedEvent(
@@ -41,5 +43,16 @@ class WorkspacePageBodyBloc extends Bloc<_Event, _State> {
     }
 
     emit(LoadSuccessState(workspace: kState.workspace));
+  }
+
+  void _onTaskEditedEvent(
+    TaskEditedEvent event,
+    Emitter<_State> emit,
+  ) {
+    final kState = state;
+    if (kState is! LoadSuccessState) return;
+
+    final updatedWorkspace = kState.workspace..upsertTask(event.task);
+    emit(LoadSuccessState(workspace: updatedWorkspace));
   }
 }

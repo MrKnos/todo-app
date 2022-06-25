@@ -36,7 +36,7 @@ class TaskPageBloc extends Bloc<_Event, _State> {
 
     kState.workspaces
         .firstWhereOrNull((workspace) => workspace.id == event.workspaceId)
-        ?.addTask(event.task);
+        ?.upsertTask(event.task);
 
     emit(LoadSuccessState(workspaces: kState.workspaces));
   }

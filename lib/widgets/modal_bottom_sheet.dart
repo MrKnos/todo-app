@@ -51,11 +51,13 @@ void showAppModalBottomSheet(
 void showTaskFormModalSheet(
   BuildContext context, {
   required void Function(Task) onFormSubmitted,
+  Task? initialTask,
 }) {
   showAppModalBottomSheet(
     context,
     heightFactor: 0.68,
     child: TaskForm(
+      initialTask: initialTask,
       onFormSubmitted: (task) {
         onFormSubmitted(task);
         Navigator.pop(context);

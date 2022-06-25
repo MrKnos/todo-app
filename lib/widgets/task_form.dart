@@ -9,10 +9,12 @@ import 'package:todo_app/models/task_form.dart';
 class TaskForm extends StatefulWidget {
   const TaskForm({
     required this.onFormSubmitted,
+    this.initialTask,
     Key? key,
   }) : super(key: key);
 
   final void Function(Task) onFormSubmitted;
+  final Task? initialTask;
 
   @override
   State<TaskForm> createState() => _TaskFormState();
@@ -26,12 +28,18 @@ class _TaskFormState extends State<TaskForm> {
       final fields = _formKey.currentState?.value;
 
       if (fields != null) {
-        widget.onFormSubmitted(Task.fromFormFields(fields));
+        final newTask = Task.fromFormFields(fields);
+        final updatedTask = widget.initialTask?.copyWith(
+          title: newTask.title,
+          description: newTask.description,
+        );
+
+        widget.onFormSubmitted(updatedTask ?? newTask);
       }
     }
   }
 
-  void _focusTaskFieldWhenBuilt() {
+  void _focusTaskTitleFieldWhenBuilt() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _formKey.currentState?.fields[TaskFormFieldNames.title]?.requestFocus();
     });
@@ -39,7 +47,7 @@ class _TaskFormState extends State<TaskForm> {
 
   @override
   Widget build(BuildContext context) {
-    _focusTaskFieldWhenBuilt();
+    _focusTaskTitleFieldWhenBuilt();
     final theme = context.read<ThemeCubit>().state;
     final textStyle = theme.material.textTheme;
 
@@ -53,6 +61,7 @@ class _TaskFormState extends State<TaskForm> {
             child: Column(
               children: [
                 FormBuilderTextField(
+                  initialValue: widget.initialTask?.title,
                   style: textStyle.bodyText1,
                   name: TaskFormFieldNames.title,
                   decoration: InputDecoration(
@@ -64,6 +73,7 @@ class _TaskFormState extends State<TaskForm> {
                 ),
                 const SizedBox(height: 16),
                 FormBuilderTextField(
+                  initialValue: widget.initialTask?.description,
                   style: textStyle.bodyText1,
                   autovalidateMode: AutovalidateMode.always,
                   name: TaskFormFieldNames.description,

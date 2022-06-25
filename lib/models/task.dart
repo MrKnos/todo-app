@@ -1,4 +1,5 @@
 import 'package:todo_app/models/task_form.dart';
+import 'package:todo_app/pages/workspace/workspace_page_presenter.dart';
 
 class Task {
   Task({
@@ -19,6 +20,15 @@ class Task {
     );
   }
 
+  factory Task.fromPresenter(TaskPresenter presenter) {
+    return Task(
+      id: presenter.id,
+      title: presenter.title,
+      description: presenter.description,
+      isCompleted: presenter.isCompleted,
+    );
+  }
+
   final String id;
   final String title;
   final String? description;
@@ -35,6 +45,15 @@ class Task {
       title: title ?? this.title,
       description: description ?? this.description,
       isCompleted: isCompleted ?? this.isCompleted,
+    );
+  }
+
+  Task copyWithTask(Task task) {
+    return copyWith(
+      id: task.id,
+      title: task.title,
+      description: task.description,
+      isCompleted: task.isCompleted,
     );
   }
 
