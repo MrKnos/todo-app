@@ -18,6 +18,7 @@ class TaskPageBloc extends Bloc<_Event, _State> {
   TaskPageBloc() : super(InitialState()) {
     on<StartedEvent>(_onStartedEvent);
     on<TaskCreatedEvent>(_onTaskCreatedEvent);
+    on<WorkspaceCreatedEvent>(_onWorkspaceCreatedEvent);
   }
 
   void _onStartedEvent(
@@ -38,6 +39,17 @@ class TaskPageBloc extends Bloc<_Event, _State> {
         .firstWhereOrNull((workspace) => workspace.id == event.workspaceId)
         ?.upsertTask(event.task);
 
+    emit(LoadSuccessState(workspaces: kState.workspaces));
+  }
+
+  void _onWorkspaceCreatedEvent(
+    WorkspaceCreatedEvent event,
+    Emitter<_State> emit,
+  ) {
+    final kState = state;
+    if (kState is! LoadSuccessState) return;
+
+    kState.workspaces.add(event.workspace);
     emit(LoadSuccessState(workspaces: kState.workspaces));
   }
 }
