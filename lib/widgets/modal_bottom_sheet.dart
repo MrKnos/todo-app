@@ -71,6 +71,7 @@ void showWorkspaceFormModalSheet(
 void showTaskFormModalSheet(
   BuildContext context, {
   required void Function(Task) onSubmitForm,
+  void Function()? onDeleteTask,
   Task? initialTask,
 }) {
   showAppModalBottomSheet(
@@ -78,6 +79,10 @@ void showTaskFormModalSheet(
     heightFactor: 0.68,
     child: TaskForm(
       initialTask: initialTask,
+      onDeleteTask: () {
+        onDeleteTask?.call();
+        Navigator.pop(context);
+      },
       onSubmitForm: (task) {
         onSubmitForm(task);
         Navigator.pop(context);

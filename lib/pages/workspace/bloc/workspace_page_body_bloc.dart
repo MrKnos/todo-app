@@ -15,6 +15,7 @@ class WorkspacePageBodyBloc extends Bloc<_Event, _State> {
     on<StartedEvent>(_onStartedEvent);
     on<TaskCheckedEvent>(_onTaskCheckedEvent);
     on<TaskEditedEvent>(_onTaskEditedEvent);
+    on<TaskDeletedEvent>(_onTaskDeletedEvent);
   }
 
   void _onStartedEvent(
@@ -54,5 +55,16 @@ class WorkspacePageBodyBloc extends Bloc<_Event, _State> {
 
     final updatedWorkspace = kState.workspace..upsertTask(event.task);
     emit(LoadSuccessState(workspace: updatedWorkspace));
+  }
+
+  void _onTaskDeletedEvent(
+    TaskDeletedEvent event,
+    Emitter<_State> emit,
+  ) {
+    final kState = state;
+    if (kState is! LoadSuccessState) return;
+
+    kState.workspace.removeTask(taskId: event.taskId);
+    emit(LoadSuccessState(workspace: kState.workspace));
   }
 }

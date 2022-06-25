@@ -104,6 +104,9 @@ class WorkspacePageBody extends StatelessWidget {
               onSubmitForm: (task) => bloc.add(
                 TaskEditedEvent(task: task),
               ),
+              onDeleteTask: () => bloc.add(
+                TaskDeletedEvent(taskId: task.id),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
