@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
+import 'package:todo_app/models/task.dart';
+import 'package:todo_app/widgets/task_form.dart';
 
 void showAppModalBottomSheet(
   BuildContext context, {
@@ -42,6 +44,24 @@ void showAppModalBottomSheet(
           ),
         ),
       ),
+    ),
+  );
+}
+
+void showTaskFormModalSheet(
+  BuildContext context, {
+  required void Function(Task) onFormSubmitted,
+  Task? initialTask,
+}) {
+  showAppModalBottomSheet(
+    context,
+    heightFactor: 0.68,
+    child: TaskForm(
+      initialTask: initialTask,
+      onFormSubmitted: (task) {
+        onFormSubmitted(task);
+        Navigator.pop(context);
+      },
     ),
   );
 }

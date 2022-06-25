@@ -34,5 +34,14 @@ class Workspace {
     return task;
   }
 
-  void addTask(Task task) => tasks.insert(0, task);
+  void upsertTask(Task newTask) {
+    final oldTaskIndex = tasks.indexWhere((task) => task.id == newTask.id);
+    final oldTask = removeTask(taskId: newTask.id);
+
+    if (oldTask == null) {
+      tasks.insert(0, newTask);
+    } else {
+      tasks.insert(oldTaskIndex, oldTask.copyWithTask(newTask));
+    }
+  }
 }

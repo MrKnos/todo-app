@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
+import 'package:todo_app/models/task.dart';
 import 'package:todo_app/pages/workspace/bloc/workspace_page_body_bloc.dart';
 import 'package:todo_app/pages/workspace/workspace_page_presenter.dart';
 import 'package:todo_app/widgets/check_box.dart';
+import 'package:todo_app/widgets/modal_bottom_sheet.dart';
 
 class WorkspacePageBody extends StatelessWidget {
   const WorkspacePageBody({Key? key}) : super(key: key);
@@ -94,30 +96,40 @@ class WorkspacePageBody extends StatelessWidget {
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                task.title,
-                style: textTheme.bodyText1?.copyWith(
-                  decoration:
-                      task.isCompleted ? TextDecoration.lineThrough : null,
-                  decorationThickness: 2,
-                ),
-                maxLines: 2,
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () => showTaskFormModalSheet(
+              context,
+              initialTask: Task.fromPresenter(task),
+              onFormSubmitted: (task) => bloc.add(
+                TaskEditedEvent(task: task),
               ),
-              if (task.description != null) ...[
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Text(
-                  task.description ?? '',
-                  style: textTheme.caption?.copyWith(
+                  task.title,
+                  style: textTheme.bodyText1?.copyWith(
                     decoration:
                         task.isCompleted ? TextDecoration.lineThrough : null,
                     decorationThickness: 2,
                   ),
-                  maxLines: 1,
+                  maxLines: 2,
                 ),
+                if (task.description != null) ...[
+                  Text(
+                    task.description ?? '',
+                    style: textTheme.caption?.copyWith(
+                      decoration:
+                          task.isCompleted ? TextDecoration.lineThrough : null,
+                      decorationThickness: 2,
+                    ),
+                    maxLines: 1,
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ],
