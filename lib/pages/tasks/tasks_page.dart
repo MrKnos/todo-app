@@ -123,13 +123,14 @@ class _TasksPageState extends State<TasksPage> {
   Widget _buildCreateNewWorkspaceButton(BuildContext context) {
     final theme = context.read<ThemeCubit>().state;
     final textStyle = theme.material.textTheme;
+    final bloc = context.read<TaskPageBloc>();
 
     return GestureDetector(
       onTap: () => showWorkspaceFormModalSheet(
         context,
-        onFormSubmitted: (workspace) {
-          // TODO(Kittipong): Bind event when workspace created.
-        },
+        onFormSubmitted: (workspace) => bloc.add(
+          WorkspaceCreatedEvent(workspace: workspace),
+        ),
       ),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),

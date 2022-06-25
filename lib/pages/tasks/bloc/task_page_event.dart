@@ -14,3 +14,9 @@ class TaskCreatedEvent extends _Event {
   final String workspaceId;
   final Task task;
 }
+
+class WorkspaceCreatedEvent extends _Event {
+  WorkspaceCreatedEvent({required this.workspace});
+
+  final Workspace workspace;
+}
