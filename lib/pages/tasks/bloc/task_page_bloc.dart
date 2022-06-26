@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/mock.dart';
 import 'package:todo_app/models/task.dart';
-import 'package:todo_app/models/workspace.dart';
+import 'package:todo_app/models/todo_board.dart';
 import 'package:todo_app/pages/tasks/tasks_page_presenter.dart';
-import 'package:todo_app/pages/workspace/bloc/workspace_page_body_bloc.dart'
-    as workspace_bloc;
+import 'package:todo_app/pages/todo_board/bloc/todo_board_page_body_bloc.dart'
+    as board_bloc;
 
 part 'task_page_event.dart';
 part 'task_page_state.dart';
@@ -18,9 +18,9 @@ class TaskPageBloc extends Bloc<_Event, _State> {
   TaskPageBloc() : super(InitialState()) {
     on<StartedEvent>(_onStartedEvent);
     on<TaskCreatedEvent>(_onTaskCreatedEvent);
-    on<WorkspaceCreatedEvent>(_onWorkspaceCreatedEvent);
-    on<WorkspaceUpdatedEvent>(_onWorkspaceUpdatedEvent);
-    on<WorkspaceDeletedEvent>(_onWorkspaceDeletedEvent);
+    on<TodoBoardCreatedEvent>(_onTodoBoardCreatedEvent);
+    on<TodoBoardUpdatedEvent>(_onTodoBoardUpdatedEvent);
+    on<TodoBoardDeletedEvent>(_onTodoBoardDeletedEvent);
     on<DeleteCompletedTasksRequestedEvent>(
       _onDeleteCompletedTasksRequestedEvent,
     );
@@ -30,7 +30,7 @@ class TaskPageBloc extends Bloc<_Event, _State> {
     StartedEvent event,
     Emitter<_State> emit,
   ) {
-    emit(LoadSuccessState(workspaces: Mock.workspaces));
+    emit(LoadSuccessState(todoBoards: Mock.todoBoards));
   }
 
   void _onTaskCreatedEvent(
@@ -40,46 +40,46 @@ class TaskPageBloc extends Bloc<_Event, _State> {
     final kState = state;
     if (kState is! LoadSuccessState) return;
 
-    kState.workspaces
-        .firstWhereOrNull((workspace) => workspace.id == event.workspaceId)
+    kState.todoBoards
+        .firstWhereOrNull((board) => board.id == event.boardId)
         ?.upsertTask(event.task);
 
-    emit(LoadSuccessState(workspaces: kState.workspaces));
+    emit(LoadSuccessState(todoBoards: kState.todoBoards));
   }
 
-  void _onWorkspaceCreatedEvent(
-    WorkspaceCreatedEvent event,
+  void _onTodoBoardCreatedEvent(
+    TodoBoardCreatedEvent event,
     Emitter<_State> emit,
   ) {
     final kState = state;
     if (kState is! LoadSuccessState) return;
 
-    kState.workspaces.add(event.workspace);
-    emit(LoadSuccessState(workspaces: kState.workspaces));
+    kState.todoBoards.add(event.todoBoard);
+    emit(LoadSuccessState(todoBoards: kState.todoBoards));
   }
 
-  void _onWorkspaceUpdatedEvent(
-    WorkspaceUpdatedEvent event,
+  void _onTodoBoardUpdatedEvent(
+    TodoBoardUpdatedEvent event,
     Emitter<_State> emit,
   ) {
     final kState = state;
     if (kState is! LoadSuccessState) return;
 
-    kState.workspaces.upsert(workspace: event.workspace);
-    emit(LoadSuccessState(workspaces: kState.workspaces));
+    kState.todoBoards.upsert(board: event.todoBoard);
+    emit(LoadSuccessState(todoBoards: kState.todoBoards));
   }
 
-  void _onWorkspaceDeletedEvent(
-    WorkspaceDeletedEvent event,
+  void _onTodoBoardDeletedEvent(
+    TodoBoardDeletedEvent event,
     Emitter<_State> emit,
   ) {
     final kState = state;
     if (kState is! LoadSuccessState) return;
 
-    kState.workspaces.removeWhere(
-      (workspace) => workspace.id == event.workspaceId,
+    kState.todoBoards.removeWhere(
+      (board) => board.id == event.boardId,
     );
-    emit(LoadSuccessState(workspaces: kState.workspaces));
+    emit(LoadSuccessState(todoBoards: kState.todoBoards));
   }
 
   void _onDeleteCompletedTasksRequestedEvent(
@@ -89,10 +89,10 @@ class TaskPageBloc extends Bloc<_Event, _State> {
     final kState = state;
     if (kState is! LoadSuccessState) return;
 
-    kState.workspaces
-        .firstWhereOrNull((workspace) => workspace.id == event.workspaceId)
+    kState.todoBoards
+        .firstWhereOrNull((board) => board.id == event.boardId)
         ?.removeCompletedTask();
 
-    emit(LoadSuccessState(workspaces: kState.workspaces));
+    emit(LoadSuccessState(todoBoards: kState.todoBoards));
   }
 }

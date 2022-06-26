@@ -1,9 +1,9 @@
 import 'package:todo_app/models/task.dart';
-import 'package:todo_app/models/workspace.dart';
+import 'package:todo_app/models/todo_board.dart';
 
 class Mock {
-  static final workspaces = [
-    Workspace(
+  static final todoBoards = [
+    TodoBoard(
       id: '0',
       name: 'Work',
       tasks: [
@@ -42,7 +42,7 @@ class Mock {
         ),
       ],
     ),
-    Workspace(
+    TodoBoard(
       id: '1',
       name: 'Personally',
       tasks: [

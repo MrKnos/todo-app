@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/models/task.dart';
-import 'package:todo_app/models/workspace.dart';
-import 'package:todo_app/pages/workspace/workspace_page_presenter.dart';
+import 'package:todo_app/models/todo_board.dart';
+import 'package:todo_app/pages/todo_board/todo_board_page_presenter.dart';
 
-part 'workspace_page_body_event.dart';
-part 'workspace_page_body_state.dart';
+part 'todo_board_page_body_event.dart';
+part 'todo_board_page_body_state.dart';
 
-typedef _State = WorkspacePageBodyState;
-typedef _Event = WorkspacePageBodyEvent;
+typedef _State = TodoBoardPageBodyState;
+typedef _Event = TodoBoardPageBodyEvent;
 
-class WorkspacePageBodyBloc extends Bloc<_Event, _State> {
-  WorkspacePageBodyBloc() : super(InitialState()) {
+class TodoBoardPageBodyBloc extends Bloc<_Event, _State> {
+  TodoBoardPageBodyBloc() : super(InitialState()) {
     on<StartedEvent>(_onStartedEvent);
     on<TaskCheckedEvent>(_onTaskCheckedEvent);
     on<TaskEditedEvent>(_onTaskEditedEvent);
@@ -22,7 +22,7 @@ class WorkspacePageBodyBloc extends Bloc<_Event, _State> {
     StartedEvent event,
     Emitter<_State> emit,
   ) {
-    emit(LoadSuccessState(workspace: event.workspace));
+    emit(LoadSuccessState(todoBoard: event.todoBoard));
   }
 
   void _onTaskCheckedEvent(
@@ -32,16 +32,16 @@ class WorkspacePageBodyBloc extends Bloc<_Event, _State> {
     final kState = state;
     if (kState is! LoadSuccessState) return;
 
-    final task = kState.workspace.findTask(taskId: event.taskId);
+    final task = kState.todoBoard.findTask(taskId: event.taskId);
     if (task == null) return;
 
     if (task.isCompleted) {
-      kState.workspace.markAsWorkInProgress(taskId: event.taskId);
+      kState.todoBoard.markAsWorkInProgress(taskId: event.taskId);
     } else {
-      kState.workspace.markAsCompleted(taskId: event.taskId);
+      kState.todoBoard.markAsCompleted(taskId: event.taskId);
     }
 
-    emit(LoadSuccessState(workspace: kState.workspace));
+    emit(LoadSuccessState(todoBoard: kState.todoBoard));
   }
 
   void _onTaskEditedEvent(
@@ -51,8 +51,8 @@ class WorkspacePageBodyBloc extends Bloc<_Event, _State> {
     final kState = state;
     if (kState is! LoadSuccessState) return;
 
-    kState.workspace.upsertTask(event.task);
-    emit(LoadSuccessState(workspace: kState.workspace));
+    kState.todoBoard.upsertTask(event.task);
+    emit(LoadSuccessState(todoBoard: kState.todoBoard));
   }
 
   void _onTaskDeletedEvent(
@@ -62,7 +62,7 @@ class WorkspacePageBodyBloc extends Bloc<_Event, _State> {
     final kState = state;
     if (kState is! LoadSuccessState) return;
 
-    kState.workspace.removeTask(taskId: event.taskId);
-    emit(LoadSuccessState(workspace: kState.workspace));
+    kState.todoBoard.removeTask(taskId: event.taskId);
+    emit(LoadSuccessState(todoBoard: kState.todoBoard));
   }
 }

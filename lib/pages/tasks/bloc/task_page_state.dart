@@ -7,14 +7,14 @@ class InitialState extends _State {}
 
 class LoadSuccessState extends _State {
   LoadSuccessState({
-    required this.workspaces,
-  })  : presenter = TasksPagePresenter.fromModel(workspaces: workspaces),
-        workspaceBlocs = workspaces
-            .map((workspace) => workspace_bloc.WorkspacePageBodyBloc()
-              ..add(workspace_bloc.StartedEvent(workspace: workspace)))
+    required this.todoBoards,
+  })  : presenter = TasksPagePresenter.fromModel(todoBoards: todoBoards),
+        todoBoardBlocs = todoBoards
+            .map((board) => board_bloc.TodoBoardPageBodyBloc()
+              ..add(board_bloc.StartedEvent(todoBoard: board)))
             .toList();
 
-  final List<Workspace> workspaces;
+  final List<TodoBoard> todoBoards;
   final TasksPagePresenter presenter;
-  final List<workspace_bloc.WorkspacePageBodyBloc> workspaceBlocs;
+  final List<board_bloc.TodoBoardPageBodyBloc> todoBoardBlocs;
 }
