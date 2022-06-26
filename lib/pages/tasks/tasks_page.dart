@@ -172,7 +172,6 @@ class _TasksPageState extends State<TasksPage> {
     required List<Workspace> workspaces,
   }) {
     final index = DefaultTabController.of(context)?.index ?? 0;
-    final workspaceId = workspaces[index].id;
     final bloc = context.read<TaskPageBloc>();
 
     switch (menu) {
@@ -185,6 +184,8 @@ class _TasksPageState extends State<TasksPage> {
         );
         break;
       case PopupMenu.editWorkspace:
+        final workspaceId = workspaces[index].id;
+
         showWorkspaceFormModalSheet(
           context,
           initialWorkspace: workspaces[index],
@@ -197,6 +198,8 @@ class _TasksPageState extends State<TasksPage> {
         );
         break;
       case PopupMenu.deleteCompletedTasks:
+        final workspaceId = workspaces[index].id;
+
         bloc.add(DeleteCompletedTasksRequestedEvent(workspaceId: workspaceId));
         break;
     }
