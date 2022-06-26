@@ -56,6 +56,8 @@ class Workspace {
     }
   }
 
+  void removeCompletedTask() => tasks.removeWhere((task) => task.isCompleted);
+
   Workspace copyWith({
     String? id,
     String? name,

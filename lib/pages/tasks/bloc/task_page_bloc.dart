@@ -21,6 +21,9 @@ class TaskPageBloc extends Bloc<_Event, _State> {
     on<WorkspaceCreatedEvent>(_onWorkspaceCreatedEvent);
     on<WorkspaceUpdatedEvent>(_onWorkspaceUpdatedEvent);
     on<WorkspaceDeletedEvent>(_onWorkspaceDeletedEvent);
+    on<DeleteCompletedTasksRequestedEvent>(
+      _onDeleteCompletedTasksRequestedEvent,
+    );
   }
 
   void _onStartedEvent(
@@ -76,6 +79,20 @@ class TaskPageBloc extends Bloc<_Event, _State> {
     kState.workspaces.removeWhere(
       (workspace) => workspace.id == event.workspaceId,
     );
+    emit(LoadSuccessState(workspaces: kState.workspaces));
+  }
+
+  void _onDeleteCompletedTasksRequestedEvent(
+    DeleteCompletedTasksRequestedEvent event,
+    Emitter<_State> emit,
+  ) {
+    final kState = state;
+    if (kState is! LoadSuccessState) return;
+
+    kState.workspaces
+        .firstWhereOrNull((workspace) => workspace.id == event.workspaceId)
+        ?.removeCompletedTask();
+
     emit(LoadSuccessState(workspaces: kState.workspaces));
   }
 }
