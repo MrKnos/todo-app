@@ -10,10 +10,12 @@ class WorkspaceForm extends StatefulWidget {
   const WorkspaceForm({
     required this.onSubmitForm,
     this.initialWorkspace,
+    this.onDeleteWorkspace,
     Key? key,
   }) : super(key: key);
 
   final void Function(Workspace) onSubmitForm;
+  final void Function()? onDeleteWorkspace;
   final Workspace? initialWorkspace;
 
   @override
@@ -28,7 +30,12 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
       final fields = _formKey.currentState?.value;
 
       if (fields != null) {
-        widget.onSubmitForm(Workspace.fromFormFields(fields));
+        final newWorkspace = Workspace.fromFormFields(fields);
+        final updatedWorkspace = widget.initialWorkspace?.copyWith(
+          name: newWorkspace.name,
+        );
+
+        widget.onSubmitForm(updatedWorkspace ?? newWorkspace);
       }
     }
   }
@@ -72,6 +79,20 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
           const SizedBox(height: 16),
           Row(
             children: [
+              if (widget.initialWorkspace != null) ...[
+                ElevatedButton(
+                  onPressed: widget.onDeleteWorkspace,
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                  ),
+                  child: Text(
+                    'Delete',
+                    style: textStyle.button?.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                )
+              ],
               const Spacer(),
               ElevatedButton(
                 onPressed: () => _onSubmitWorkspaceForm(context),

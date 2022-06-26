@@ -20,3 +20,21 @@ class WorkspaceCreatedEvent extends _Event {
 
   final Workspace workspace;
 }
+
+class WorkspaceUpdatedEvent extends _Event {
+  WorkspaceUpdatedEvent({required this.workspace});
+
+  final Workspace workspace;
+}
+
+class WorkspaceDeletedEvent extends _Event {
+  WorkspaceDeletedEvent({required this.workspaceId});
+
+  final String workspaceId;
+}
+
+class DeleteCompletedTasksRequestedEvent extends _Event {
+  DeleteCompletedTasksRequestedEvent({required this.workspaceId});
+
+  final String workspaceId;
+}

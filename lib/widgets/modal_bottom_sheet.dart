@@ -53,6 +53,7 @@ void showAppModalBottomSheet(
 void showWorkspaceFormModalSheet(
   BuildContext context, {
   required void Function(Workspace) onSubmitForm,
+  void Function()? onDeleteWorkspace,
   Workspace? initialWorkspace,
 }) {
   showAppModalBottomSheet(
@@ -62,6 +63,10 @@ void showWorkspaceFormModalSheet(
       initialWorkspace: initialWorkspace,
       onSubmitForm: (workspace) {
         onSubmitForm(workspace);
+        Navigator.pop(context);
+      },
+      onDeleteWorkspace: () {
+        onDeleteWorkspace?.call();
         Navigator.pop(context);
       },
     ),

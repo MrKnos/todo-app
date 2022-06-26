@@ -55,4 +55,30 @@ class Workspace {
       tasks.insert(oldTaskIndex, oldTask.copyWithTask(newTask));
     }
   }
+
+  Workspace copyWith({
+    String? id,
+    String? name,
+    List<Task>? tasks,
+  }) {
+    return Workspace(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      tasks: tasks ?? this.tasks,
+    );
+  }
+}
+
+extension WorkspacesExtension on List<Workspace> {
+  void upsert({required Workspace workspace}) {
+    final workspaceIndex = indexWhere(
+      (kWorkspace) => kWorkspace.id == workspace.id,
+    );
+
+    if (workspaceIndex < 0) {
+      return add(workspace);
+    } else {
+      replaceRange(workspaceIndex, workspaceIndex + 1, [workspace]);
+    }
+  }
 }
