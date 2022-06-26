@@ -47,12 +47,11 @@ class TodoBoard {
 
   void upsertTask(Task newTask) {
     final oldTaskIndex = tasks.indexWhere((task) => task.id == newTask.id);
-    final oldTask = removeTask(taskId: newTask.id);
 
-    if (oldTask == null) {
+    if (oldTaskIndex < 0) {
       tasks.insert(0, newTask);
     } else {
-      tasks.insert(oldTaskIndex, oldTask.copyWithTask(newTask));
+      tasks.replaceRange(oldTaskIndex, oldTaskIndex + 1, [newTask]);
     }
   }
 

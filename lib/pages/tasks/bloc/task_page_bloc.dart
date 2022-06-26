@@ -79,6 +79,7 @@ class TaskPageBloc extends Bloc<_Event, _State> {
     kState.todoBoards.removeWhere(
       (board) => board.id == event.boardId,
     );
+
     emit(LoadSuccessState(todoBoards: kState.todoBoards));
   }
 

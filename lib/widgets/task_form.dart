@@ -25,28 +25,6 @@ class TaskForm extends StatefulWidget {
 class _TaskFormState extends State<TaskForm> {
   final _formKey = GlobalKey<FormBuilderState>();
 
-  void _onSubmitTask(BuildContext context) {
-    if (_formKey.currentState?.saveAndValidate() ?? false) {
-      final fields = _formKey.currentState?.value;
-
-      if (fields != null) {
-        final newTask = Task.fromFormFields(fields);
-        final updatedTask = widget.initialTask?.copyWith(
-          title: newTask.title,
-          description: newTask.description,
-        );
-
-        widget.onSubmitForm(updatedTask ?? newTask);
-      }
-    }
-  }
-
-  void _focusTaskTitleFieldWhenBuilt() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _formKey.currentState?.fields[TaskFormFieldNames.title]?.requestFocus();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     _focusTaskTitleFieldWhenBuilt();
@@ -115,5 +93,27 @@ class _TaskFormState extends State<TaskForm> {
         ],
       ),
     );
+  }
+
+  void _onSubmitTask(BuildContext context) {
+    if (_formKey.currentState?.saveAndValidate() ?? false) {
+      final fields = _formKey.currentState?.value;
+
+      if (fields != null) {
+        final newTask = Task.fromFormFields(fields);
+        final updatedTask = widget.initialTask?.copyWith(
+          title: newTask.title,
+          description: newTask.description,
+        );
+
+        widget.onSubmitForm(updatedTask ?? newTask);
+      }
+    }
+  }
+
+  void _focusTaskTitleFieldWhenBuilt() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _formKey.currentState?.fields[TaskFormFieldNames.title]?.requestFocus();
+    });
   }
 }
