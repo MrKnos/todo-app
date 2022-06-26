@@ -19,18 +19,6 @@ class TasksPage extends StatefulWidget {
 }
 
 class _TasksPageState extends State<TasksPage> {
-  void _createNewTask(
-    BuildContext context, {
-    required List<Workspace> workspaces,
-    required Task task,
-  }) {
-    final index = DefaultTabController.of(context)?.index ?? 0;
-    final workspaceId = workspaces[index].id;
-    final bloc = context.read<TaskPageBloc>();
-
-    bloc.add(TaskCreatedEvent(workspaceId: workspaceId, task: task));
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TaskPageBloc, TaskPageState>(
@@ -59,18 +47,24 @@ class _TasksPageState extends State<TasksPage> {
       length: presenter.workspaces.length,
       child: Builder(builder: (context) {
         return PageScaffold(
-          appBar: _buildAppBar(context, presenter: presenter),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => showTaskFormModalSheet(
-              context,
-              onFormSubmitted: (task) => _createNewTask(
-                context,
-                workspaces: workspaces,
-                task: task,
-              ),
-            ),
-            child: const Icon(Icons.add, size: 30),
+          appBar: _buildAppBar(
+            context,
+            presenter: presenter,
+            workspaces: workspaces,
           ),
+          floatingActionButton: workspaces.isNotEmpty
+              ? FloatingActionButton(
+                  onPressed: () => showTaskFormModalSheet(
+                    context,
+                    onSubmitForm: (task) => _createNewTask(
+                      context,
+                      workspaces: workspaces,
+                      task: task,
+                    ),
+                  ),
+                  child: const Icon(Icons.add, size: 30),
+                )
+              : null,
           child: TabBarView(
             children: [
               ...workspaceBlocs.map(
@@ -89,6 +83,7 @@ class _TasksPageState extends State<TasksPage> {
   AppBar _buildAppBar(
     BuildContext context, {
     required TasksPagePresenter presenter,
+    required List<Workspace> workspaces,
   }) {
     final theme = context.read<ThemeCubit>().state;
     final textStyle = theme.material.textTheme;
@@ -99,61 +94,57 @@ class _TasksPageState extends State<TasksPage> {
         'Tasks',
         style: textStyle.headline1,
       ),
-      actions: [_buildCreateNewWorkspaceButton(context)],
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(40),
-        child: TabBar(
-          isScrollable: true,
-          indicatorColor: Colors.black,
-          tabs: [
-            ...presenter.workspaces.map(
-              (workspace) => Tab(
-                child: Text(
-                  workspace.name,
-                  style: textStyle.button,
-                ),
+      actions: [
+        _buildMenuButton(context, workspaces: workspaces),
+      ],
+      bottom: workspaces.isNotEmpty
+          ? PreferredSize(
+              preferredSize: const Size.fromHeight(40),
+              child: TabBar(
+                isScrollable: true,
+                indicatorColor: Colors.black,
+                tabs: [
+                  ...presenter.workspaces.map(
+                    (workspace) => Tab(
+                      child: Text(
+                        workspace.name,
+                        style: textStyle.button,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ),
+            )
+          : null,
     );
   }
 
-  Widget _buildCreateNewWorkspaceButton(BuildContext context) {
-    final theme = context.read<ThemeCubit>().state;
-    final textStyle = theme.material.textTheme;
-    final bloc = context.read<TaskPageBloc>();
-
-    return GestureDetector(
-      onTap: () => showWorkspaceFormModalSheet(
+  Widget _buildMenuButton(
+    BuildContext context, {
+    required List<Workspace> workspaces,
+  }) {
+    return PopupMenuButton<PopupMenu>(
+      padding: const EdgeInsets.only(right: 20),
+      icon: const Icon(Icons.menu, size: 30),
+      onSelected: (menu) => _onSelectedPopupMenuButton(
         context,
-        onFormSubmitted: (workspace) => bloc.add(
-          WorkspaceCreatedEvent(workspace: workspace),
-        ),
+        menu: menu,
+        workspaces: workspaces,
       ),
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(20)),
-          border: Border.all(),
+      itemBuilder: (context) => [
+        const PopupMenuItem<PopupMenu>(
+          value: PopupMenu.createNewWorkspace,
+          child: Text('New Workspace'),
         ),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.add,
-              color: Colors.black,
-            ),
-            Text(
-              'Workspace',
-              style: textStyle.button?.copyWith(
-                color: Colors.black,
-              ),
-            ),
-          ],
+        const PopupMenuItem<PopupMenu>(
+          value: PopupMenu.editWorkspace,
+          child: Text('Edit Workspace'),
         ),
-      ),
+        const PopupMenuItem<PopupMenu>(
+          value: PopupMenu.deleteCompletedTasks,
+          child: Text('Delete Completed Tasks'),
+        ),
+      ],
     );
   }
 
@@ -166,4 +157,61 @@ class _TasksPageState extends State<TasksPage> {
       child: const WorkspacePageBody(),
     );
   }
+
+  void _createNewTask(
+    BuildContext context, {
+    required List<Workspace> workspaces,
+    required Task task,
+  }) {
+    final index = DefaultTabController.of(context)?.index ?? 0;
+    final workspaceId = workspaces[index].id;
+    final bloc = context.read<TaskPageBloc>();
+
+    bloc.add(TaskCreatedEvent(workspaceId: workspaceId, task: task));
+  }
+
+  void _onSelectedPopupMenuButton(
+    BuildContext context, {
+    required PopupMenu menu,
+    required List<Workspace> workspaces,
+  }) {
+    final index = DefaultTabController.of(context)?.index ?? 0;
+    final bloc = context.read<TaskPageBloc>();
+
+    switch (menu) {
+      case PopupMenu.createNewWorkspace:
+        showWorkspaceFormModalSheet(
+          context,
+          onSubmitForm: (workspace) => bloc.add(
+            WorkspaceCreatedEvent(workspace: workspace),
+          ),
+        );
+        break;
+      case PopupMenu.editWorkspace:
+        final workspaceId = workspaces[index].id;
+
+        showWorkspaceFormModalSheet(
+          context,
+          initialWorkspace: workspaces[index],
+          onSubmitForm: (workspace) => bloc.add(
+            WorkspaceUpdatedEvent(workspace: workspace),
+          ),
+          onDeleteWorkspace: () => bloc.add(
+            WorkspaceDeletedEvent(workspaceId: workspaceId),
+          ),
+        );
+        break;
+      case PopupMenu.deleteCompletedTasks:
+        final workspaceId = workspaces[index].id;
+
+        bloc.add(DeleteCompletedTasksRequestedEvent(workspaceId: workspaceId));
+        break;
+    }
+  }
+}
+
+enum PopupMenu {
+  createNewWorkspace,
+  editWorkspace,
+  deleteCompletedTasks,
 }

@@ -15,6 +15,7 @@ class WorkspacePageBodyBloc extends Bloc<_Event, _State> {
     on<StartedEvent>(_onStartedEvent);
     on<TaskCheckedEvent>(_onTaskCheckedEvent);
     on<TaskEditedEvent>(_onTaskEditedEvent);
+    on<TaskDeletedEvent>(_onTaskDeletedEvent);
   }
 
   void _onStartedEvent(
@@ -32,9 +33,7 @@ class WorkspacePageBodyBloc extends Bloc<_Event, _State> {
     if (kState is! LoadSuccessState) return;
 
     final task = kState.workspace.findTask(taskId: event.taskId);
-
-    // TODO(Kittipong): Handle when task not found.
-    if (task == null) throw Exception('Task Not found');
+    if (task == null) return;
 
     if (task.isCompleted) {
       kState.workspace.markAsWorkInProgress(taskId: event.taskId);
@@ -52,7 +51,18 @@ class WorkspacePageBodyBloc extends Bloc<_Event, _State> {
     final kState = state;
     if (kState is! LoadSuccessState) return;
 
-    final updatedWorkspace = kState.workspace..upsertTask(event.task);
-    emit(LoadSuccessState(workspace: updatedWorkspace));
+    kState.workspace.upsertTask(event.task);
+    emit(LoadSuccessState(workspace: kState.workspace));
+  }
+
+  void _onTaskDeletedEvent(
+    TaskDeletedEvent event,
+    Emitter<_State> emit,
+  ) {
+    final kState = state;
+    if (kState is! LoadSuccessState) return;
+
+    kState.workspace.removeTask(taskId: event.taskId);
+    emit(LoadSuccessState(workspace: kState.workspace));
   }
 }

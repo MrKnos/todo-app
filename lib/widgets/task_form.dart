@@ -8,12 +8,14 @@ import 'package:todo_app/models/task.dart';
 
 class TaskForm extends StatefulWidget {
   const TaskForm({
-    required this.onFormSubmitted,
+    required this.onSubmitForm,
+    this.onDeleteTask,
     this.initialTask,
     Key? key,
   }) : super(key: key);
 
-  final void Function(Task) onFormSubmitted;
+  final void Function(Task) onSubmitForm;
+  final void Function()? onDeleteTask;
   final Task? initialTask;
 
   @override
@@ -34,7 +36,7 @@ class _TaskFormState extends State<TaskForm> {
           description: newTask.description,
         );
 
-        widget.onFormSubmitted(updatedTask ?? newTask);
+        widget.onSubmitForm(updatedTask ?? newTask);
       }
     }
   }
@@ -89,6 +91,20 @@ class _TaskFormState extends State<TaskForm> {
           const SizedBox(height: 16),
           Row(
             children: [
+              if (widget.initialTask != null) ...[
+                ElevatedButton(
+                  onPressed: widget.onDeleteTask,
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                  ),
+                  child: Text(
+                    'Delete',
+                    style: textStyle.button?.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                )
+              ],
               const Spacer(),
               ElevatedButton(
                 onPressed: () => _onSubmitTask(context),

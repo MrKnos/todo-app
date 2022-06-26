@@ -20,3 +20,9 @@ class TaskEditedEvent extends _Event {
 
   final Task task;
 }
+
+class TaskDeletedEvent extends _Event {
+  TaskDeletedEvent({required this.taskId});
+
+  final String taskId;
+}

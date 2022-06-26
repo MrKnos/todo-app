@@ -19,6 +19,11 @@ class TaskPageBloc extends Bloc<_Event, _State> {
     on<StartedEvent>(_onStartedEvent);
     on<TaskCreatedEvent>(_onTaskCreatedEvent);
     on<WorkspaceCreatedEvent>(_onWorkspaceCreatedEvent);
+    on<WorkspaceUpdatedEvent>(_onWorkspaceUpdatedEvent);
+    on<WorkspaceDeletedEvent>(_onWorkspaceDeletedEvent);
+    on<DeleteCompletedTasksRequestedEvent>(
+      _onDeleteCompletedTasksRequestedEvent,
+    );
   }
 
   void _onStartedEvent(
@@ -50,6 +55,44 @@ class TaskPageBloc extends Bloc<_Event, _State> {
     if (kState is! LoadSuccessState) return;
 
     kState.workspaces.add(event.workspace);
+    emit(LoadSuccessState(workspaces: kState.workspaces));
+  }
+
+  void _onWorkspaceUpdatedEvent(
+    WorkspaceUpdatedEvent event,
+    Emitter<_State> emit,
+  ) {
+    final kState = state;
+    if (kState is! LoadSuccessState) return;
+
+    kState.workspaces.upsert(workspace: event.workspace);
+    emit(LoadSuccessState(workspaces: kState.workspaces));
+  }
+
+  void _onWorkspaceDeletedEvent(
+    WorkspaceDeletedEvent event,
+    Emitter<_State> emit,
+  ) {
+    final kState = state;
+    if (kState is! LoadSuccessState) return;
+
+    kState.workspaces.removeWhere(
+      (workspace) => workspace.id == event.workspaceId,
+    );
+    emit(LoadSuccessState(workspaces: kState.workspaces));
+  }
+
+  void _onDeleteCompletedTasksRequestedEvent(
+    DeleteCompletedTasksRequestedEvent event,
+    Emitter<_State> emit,
+  ) {
+    final kState = state;
+    if (kState is! LoadSuccessState) return;
+
+    kState.workspaces
+        .firstWhereOrNull((workspace) => workspace.id == event.workspaceId)
+        ?.removeCompletedTask();
+
     emit(LoadSuccessState(workspaces: kState.workspaces));
   }
 }

@@ -52,7 +52,8 @@ void showAppModalBottomSheet(
 
 void showWorkspaceFormModalSheet(
   BuildContext context, {
-  required void Function(Workspace) onFormSubmitted,
+  required void Function(Workspace) onSubmitForm,
+  void Function()? onDeleteWorkspace,
   Workspace? initialWorkspace,
 }) {
   showAppModalBottomSheet(
@@ -60,8 +61,12 @@ void showWorkspaceFormModalSheet(
     heightFactor: 0.6,
     child: WorkspaceForm(
       initialWorkspace: initialWorkspace,
-      onFormSubmitted: (workspace) {
-        onFormSubmitted(workspace);
+      onSubmitForm: (workspace) {
+        onSubmitForm(workspace);
+        Navigator.pop(context);
+      },
+      onDeleteWorkspace: () {
+        onDeleteWorkspace?.call();
         Navigator.pop(context);
       },
     ),
@@ -70,7 +75,8 @@ void showWorkspaceFormModalSheet(
 
 void showTaskFormModalSheet(
   BuildContext context, {
-  required void Function(Task) onFormSubmitted,
+  required void Function(Task) onSubmitForm,
+  void Function()? onDeleteTask,
   Task? initialTask,
 }) {
   showAppModalBottomSheet(
@@ -78,8 +84,12 @@ void showTaskFormModalSheet(
     heightFactor: 0.68,
     child: TaskForm(
       initialTask: initialTask,
-      onFormSubmitted: (task) {
-        onFormSubmitted(task);
+      onDeleteTask: () {
+        onDeleteTask?.call();
+        Navigator.pop(context);
+      },
+      onSubmitForm: (task) {
+        onSubmitForm(task);
         Navigator.pop(context);
       },
     ),
