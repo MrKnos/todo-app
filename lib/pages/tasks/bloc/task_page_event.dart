@@ -12,19 +12,19 @@ class TaskCreatedEvent extends _Event {
   });
 
   final String boardId;
-  final Task task;
+  final TaskPresenter task;
 }
 
 class TodoBoardCreatedEvent extends _Event {
   TodoBoardCreatedEvent({required this.todoBoard});
 
-  final TodoBoard todoBoard;
+  final TodoBoardPagePresenter todoBoard;
 }
 
 class TodoBoardUpdatedEvent extends _Event {
   TodoBoardUpdatedEvent({required this.todoBoard});
 
-  final TodoBoard todoBoard;
+  final TodoBoardPagePresenter todoBoard;
 }
 
 class TodoBoardDeletedEvent extends _Event {

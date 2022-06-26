@@ -7,6 +7,7 @@ import 'package:todo_app/models/todo_board.dart';
 import 'package:todo_app/pages/tasks/tasks_page_presenter.dart';
 import 'package:todo_app/pages/todo_board/bloc/todo_board_page_body_bloc.dart'
     as board_bloc;
+import 'package:todo_app/pages/todo_board/todo_board_page_presenter.dart';
 
 part 'task_page_event.dart';
 part 'task_page_state.dart';
@@ -42,7 +43,7 @@ class TaskPageBloc extends Bloc<_Event, _State> {
 
     kState.todoBoards
         .firstWhereOrNull((board) => board.id == event.boardId)
-        ?.upsertTask(event.task);
+        ?.upsertTask(Task.fromPresenter(event.task));
 
     emit(LoadSuccessState(todoBoards: kState.todoBoards));
   }
@@ -54,7 +55,7 @@ class TaskPageBloc extends Bloc<_Event, _State> {
     final kState = state;
     if (kState is! LoadSuccessState) return;
 
-    kState.todoBoards.add(event.todoBoard);
+    kState.todoBoards.add(TodoBoard.fromPresenter(event.todoBoard));
     emit(LoadSuccessState(todoBoards: kState.todoBoards));
   }
 
@@ -65,7 +66,7 @@ class TaskPageBloc extends Bloc<_Event, _State> {
     final kState = state;
     if (kState is! LoadSuccessState) return;
 
-    kState.todoBoards.upsert(board: event.todoBoard);
+    kState.todoBoards.upsert(board: TodoBoard.fromPresenter(event.todoBoard));
     emit(LoadSuccessState(todoBoards: kState.todoBoards));
   }
 

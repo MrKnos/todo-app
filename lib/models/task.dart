@@ -1,4 +1,3 @@
-import 'package:todo_app/models/form/task_form_field_names.dart';
 import 'package:todo_app/pages/todo_board/todo_board_page_presenter.dart';
 
 class Task {
@@ -8,17 +7,6 @@ class Task {
     required this.isCompleted,
     this.description,
   });
-
-  factory Task.fromFormFields(Map<String, dynamic> fields) {
-    assert(fields[TaskFormFieldNames.title] != null);
-
-    return Task(
-      id: DateTime.now().toString(),
-      title: fields[TaskFormFieldNames.title]?.toString() ?? '',
-      description: fields[TaskFormFieldNames.description]?.toString(),
-      isCompleted: false,
-    );
-  }
 
   factory Task.fromPresenter(TaskPresenter presenter) {
     return Task(

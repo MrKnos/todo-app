@@ -51,7 +51,7 @@ class TodoBoardPageBodyBloc extends Bloc<_Event, _State> {
     final kState = state;
     if (kState is! LoadSuccessState) return;
 
-    kState.todoBoard.upsertTask(event.task);
+    kState.todoBoard.upsertTask(Task.fromPresenter(event.task));
     emit(LoadSuccessState(todoBoard: kState.todoBoard));
   }
 

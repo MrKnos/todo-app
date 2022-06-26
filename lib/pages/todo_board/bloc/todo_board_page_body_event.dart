@@ -18,7 +18,7 @@ class TaskCheckedEvent extends _Event {
 class TaskEditedEvent extends _Event {
   TaskEditedEvent({required this.task});
 
-  final Task task;
+  final TaskPresenter task;
 }
 
 class TaskDeletedEvent extends _Event {

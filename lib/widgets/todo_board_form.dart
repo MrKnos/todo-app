@@ -4,7 +4,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
 import 'package:todo_app/models/form/todo_board_form_field_names.dart';
-import 'package:todo_app/models/todo_board.dart';
+import 'package:todo_app/pages/todo_board/todo_board_page_presenter.dart';
 
 class TodoBoardForm extends StatefulWidget {
   const TodoBoardForm({
@@ -14,9 +14,9 @@ class TodoBoardForm extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-  final void Function(TodoBoard) onSubmitForm;
+  final void Function(TodoBoardPagePresenter) onSubmitForm;
   final void Function()? onDeleteTodoBoard;
-  final TodoBoard? initialTodoBoard;
+  final TodoBoardPagePresenter? initialTodoBoard;
 
   @override
   State<TodoBoardForm> createState() => _TodoBoardFormState();
@@ -88,7 +88,7 @@ class _TodoBoardFormState extends State<TodoBoardForm> {
       final fields = _formKey.currentState?.value;
 
       if (fields != null) {
-        final newBoard = TodoBoard.fromFormFields(fields);
+        final newBoard = TodoBoardPagePresenter.fromFormFields(fields);
         final updatedBoard = widget.initialTodoBoard?.copyWith(
           name: newBoard.name,
         );

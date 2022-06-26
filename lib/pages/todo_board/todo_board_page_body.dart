@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
-import 'package:todo_app/models/task.dart';
 import 'package:todo_app/pages/todo_board/bloc/todo_board_page_body_bloc.dart';
 import 'package:todo_app/pages/todo_board/todo_board_page_presenter.dart';
 import 'package:todo_app/widgets/check_box.dart';
@@ -100,7 +99,7 @@ class TodoBoardPageBody extends StatelessWidget {
             behavior: HitTestBehavior.translucent,
             onTap: () => showTaskFormModalSheet(
               context,
-              initialTask: Task.fromPresenter(task),
+              initialTask: task,
               onSubmitForm: (task) => bloc.add(
                 TaskEditedEvent(task: task),
               ),

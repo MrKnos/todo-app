@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
-import 'package:todo_app/models/task.dart';
-import 'package:todo_app/models/todo_board.dart';
+import 'package:todo_app/pages/todo_board/todo_board_page_presenter.dart';
 import 'package:todo_app/widgets/task_form.dart';
 import 'package:todo_app/widgets/todo_board_form.dart';
 
@@ -52,9 +51,9 @@ void showAppModalBottomSheet(
 
 void showTodoBoardFormModalSheet(
   BuildContext context, {
-  required void Function(TodoBoard) onSubmitForm,
+  required void Function(TodoBoardPagePresenter) onSubmitForm,
   void Function()? onDeleteTodoBoard,
-  TodoBoard? initialTodoBoard,
+  TodoBoardPagePresenter? initialTodoBoard,
 }) {
   showAppModalBottomSheet(
     context,
@@ -75,9 +74,9 @@ void showTodoBoardFormModalSheet(
 
 void showTaskFormModalSheet(
   BuildContext context, {
-  required void Function(Task) onSubmitForm,
+  required void Function(TaskPresenter) onSubmitForm,
   void Function()? onDeleteTask,
-  Task? initialTask,
+  TaskPresenter? initialTask,
 }) {
   showAppModalBottomSheet(
     context,

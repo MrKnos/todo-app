@@ -4,7 +4,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
 import 'package:todo_app/models/form/task_form_field_names.dart';
-import 'package:todo_app/models/task.dart';
+import 'package:todo_app/pages/todo_board/todo_board_page_presenter.dart';
 
 class TaskForm extends StatefulWidget {
   const TaskForm({
@@ -14,9 +14,9 @@ class TaskForm extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
-  final void Function(Task) onSubmitForm;
+  final void Function(TaskPresenter) onSubmitForm;
   final void Function()? onDeleteTask;
-  final Task? initialTask;
+  final TaskPresenter? initialTask;
 
   @override
   State<TaskForm> createState() => _TaskFormState();
@@ -100,7 +100,7 @@ class _TaskFormState extends State<TaskForm> {
       final fields = _formKey.currentState?.value;
 
       if (fields != null) {
-        final newTask = Task.fromFormFields(fields);
+        final newTask = TaskPresenter.fromFormFields(fields);
         final updatedTask = widget.initialTask?.copyWith(
           title: newTask.title,
           description: newTask.description,

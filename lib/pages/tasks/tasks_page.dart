@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
-import 'package:todo_app/models/task.dart';
-import 'package:todo_app/models/todo_board.dart';
 import 'package:todo_app/pages/page_scaffold.dart';
 import 'package:todo_app/pages/tasks/bloc/task_page_bloc.dart';
 import 'package:todo_app/pages/tasks/tasks_page_presenter.dart';
 import 'package:todo_app/pages/todo_board/bloc/todo_board_page_body_bloc.dart'
     as page_body;
 import 'package:todo_app/pages/todo_board/todo_board_page_body.dart';
+import 'package:todo_app/pages/todo_board/todo_board_page_presenter.dart';
 import 'package:todo_app/widgets/modal_bottom_sheet.dart';
 
 class TasksPage extends StatefulWidget {
@@ -27,7 +26,6 @@ class _TasksPageState extends State<TasksPage> {
           return _buildLoadSuccess(
             context,
             presenter: state.presenter,
-            todoBoards: state.todoBoards,
             todoBoardBlocs: state.todoBoardBlocs,
           );
         } else {
@@ -40,25 +38,20 @@ class _TasksPageState extends State<TasksPage> {
   Widget _buildLoadSuccess(
     BuildContext context, {
     required TasksPagePresenter presenter,
-    required List<TodoBoard> todoBoards,
     required List<page_body.TodoBoardPageBodyBloc> todoBoardBlocs,
   }) {
     return DefaultTabController(
       length: presenter.todoBoards.length,
       child: Builder(builder: (context) {
         return PageScaffold(
-          appBar: _buildAppBar(
-            context,
-            presenter: presenter,
-            todoBoards: todoBoards,
-          ),
-          floatingActionButton: todoBoards.isNotEmpty
+          appBar: _buildAppBar(context, presenter: presenter),
+          floatingActionButton: presenter.todoBoards.isNotEmpty
               ? FloatingActionButton(
                   onPressed: () => showTaskFormModalSheet(
                     context,
                     onSubmitForm: (task) => _createNewTask(
                       context,
-                      todoBoards: todoBoards,
+                      presenter: presenter,
                       task: task,
                     ),
                   ),
@@ -83,7 +76,6 @@ class _TasksPageState extends State<TasksPage> {
   AppBar _buildAppBar(
     BuildContext context, {
     required TasksPagePresenter presenter,
-    required List<TodoBoard> todoBoards,
   }) {
     final theme = context.read<ThemeCubit>().state;
     final textStyle = theme.material.textTheme;
@@ -95,9 +87,9 @@ class _TasksPageState extends State<TasksPage> {
         style: textStyle.headline1,
       ),
       actions: [
-        _buildMenuButton(context, todoBoards: todoBoards),
+        _buildMenuButton(context, presenter: presenter),
       ],
-      bottom: todoBoards.isNotEmpty
+      bottom: presenter.todoBoards.isNotEmpty
           ? PreferredSize(
               preferredSize: const Size.fromHeight(40),
               child: TabBar(
@@ -121,7 +113,7 @@ class _TasksPageState extends State<TasksPage> {
 
   Widget _buildMenuButton(
     BuildContext context, {
-    required List<TodoBoard> todoBoards,
+    required TasksPagePresenter presenter,
   }) {
     return PopupMenuButton<PopupMenu>(
       padding: const EdgeInsets.only(right: 20),
@@ -129,7 +121,7 @@ class _TasksPageState extends State<TasksPage> {
       onSelected: (menu) => _onSelectedPopupMenuButton(
         context,
         menu: menu,
-        todoBoards: todoBoards,
+        presenter: presenter,
       ),
       itemBuilder: (context) => [
         const PopupMenuItem<PopupMenu>(
@@ -160,11 +152,11 @@ class _TasksPageState extends State<TasksPage> {
 
   void _createNewTask(
     BuildContext context, {
-    required List<TodoBoard> todoBoards,
-    required Task task,
+    required TasksPagePresenter presenter,
+    required TaskPresenter task,
   }) {
     final index = DefaultTabController.of(context)?.index ?? 0;
-    final boardId = todoBoards[index].id;
+    final boardId = presenter.todoBoards[index].id;
     final bloc = context.read<TaskPageBloc>();
 
     bloc.add(TaskCreatedEvent(boardId: boardId, task: task));
@@ -173,7 +165,7 @@ class _TasksPageState extends State<TasksPage> {
   void _onSelectedPopupMenuButton(
     BuildContext context, {
     required PopupMenu menu,
-    required List<TodoBoard> todoBoards,
+    required TasksPagePresenter presenter,
   }) {
     final index = DefaultTabController.of(context)?.index ?? 0;
     final bloc = context.read<TaskPageBloc>();
@@ -188,11 +180,11 @@ class _TasksPageState extends State<TasksPage> {
         );
         break;
       case PopupMenu.editTodoBoard:
-        final boardId = todoBoards[index].id;
+        final boardId = presenter.todoBoards[index].id;
 
         showTodoBoardFormModalSheet(
           context,
-          initialTodoBoard: todoBoards[index],
+          initialTodoBoard: presenter.todoBoards[index],
           onSubmitForm: (todoBoard) => bloc.add(
             TodoBoardUpdatedEvent(todoBoard: todoBoard),
           ),
@@ -202,7 +194,7 @@ class _TasksPageState extends State<TasksPage> {
         );
         break;
       case PopupMenu.deleteCompletedTasks:
-        final boardId = todoBoards[index].id;
+        final boardId = presenter.todoBoards[index].id;
 
         bloc.add(DeleteCompletedTasksRequestedEvent(boardId: boardId));
         break;

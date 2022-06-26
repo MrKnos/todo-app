@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
-import 'package:todo_app/models/form/todo_board_form_field_names.dart';
 import 'package:todo_app/models/task.dart';
+import 'package:todo_app/pages/todo_board/todo_board_page_presenter.dart';
 
 class TodoBoard {
   TodoBoard({
@@ -13,13 +13,11 @@ class TodoBoard {
   final String name;
   final List<Task> tasks;
 
-  factory TodoBoard.fromFormFields(Map<String, dynamic> fields) {
-    assert(fields[TodoBoardFormFieldNames.name] != null);
-
+  factory TodoBoard.fromPresenter(TodoBoardPagePresenter presenter) {
     return TodoBoard(
-      id: DateTime.now().toString(),
-      name: fields[TodoBoardFormFieldNames.name]?.toString() ?? '-',
-      tasks: [],
+      id: presenter.id,
+      name: presenter.name,
+      tasks: presenter.tasks.map(Task.fromPresenter).toList(),
     );
   }
 
