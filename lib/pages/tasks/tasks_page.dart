@@ -52,17 +52,19 @@ class _TasksPageState extends State<TasksPage> {
             presenter: presenter,
             workspaces: workspaces,
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => showTaskFormModalSheet(
-              context,
-              onSubmitForm: (task) => _createNewTask(
-                context,
-                workspaces: workspaces,
-                task: task,
-              ),
-            ),
-            child: const Icon(Icons.add, size: 30),
-          ),
+          floatingActionButton: workspaces.isNotEmpty
+              ? FloatingActionButton(
+                  onPressed: () => showTaskFormModalSheet(
+                    context,
+                    onSubmitForm: (task) => _createNewTask(
+                      context,
+                      workspaces: workspaces,
+                      task: task,
+                    ),
+                  ),
+                  child: const Icon(Icons.add, size: 30),
+                )
+              : null,
           child: TabBarView(
             children: [
               ...workspaceBlocs.map(
@@ -95,23 +97,25 @@ class _TasksPageState extends State<TasksPage> {
       actions: [
         _buildMenuButton(context, workspaces: workspaces),
       ],
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(40),
-        child: TabBar(
-          isScrollable: true,
-          indicatorColor: Colors.black,
-          tabs: [
-            ...presenter.workspaces.map(
-              (workspace) => Tab(
-                child: Text(
-                  workspace.name,
-                  style: textStyle.button,
-                ),
+      bottom: workspaces.isNotEmpty
+          ? PreferredSize(
+              preferredSize: const Size.fromHeight(40),
+              child: TabBar(
+                isScrollable: true,
+                indicatorColor: Colors.black,
+                tabs: [
+                  ...presenter.workspaces.map(
+                    (workspace) => Tab(
+                      child: Text(
+                        workspace.name,
+                        style: textStyle.button,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ),
+            )
+          : null,
     );
   }
 
