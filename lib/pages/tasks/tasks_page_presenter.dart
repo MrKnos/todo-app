@@ -1,18 +1,18 @@
-import 'package:todo_app/models/workspace.dart';
-import 'package:todo_app/pages/workspace/workspace_page_presenter.dart';
+import 'package:todo_app/models/todo_board.dart';
+import 'package:todo_app/pages/todo_board/todo_board_page_presenter.dart';
 
 class TasksPagePresenter {
   TasksPagePresenter({
-    required this.workspaces,
+    required this.todoBoards,
   });
 
   factory TasksPagePresenter.fromModel({
-    required List<Workspace> workspaces,
+    required List<TodoBoard> todoBoards,
   }) {
     return TasksPagePresenter(
-      workspaces: workspaces.map(WorkspacePagePresenter.fromModel).toList(),
+      todoBoards: todoBoards.map(TodoBoardPagePresenter.fromModel).toList(),
     );
   }
 
-  final List<WorkspacePagePresenter> workspaces;
+  final List<TodoBoardPagePresenter> todoBoards;
 }

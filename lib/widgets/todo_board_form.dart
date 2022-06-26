@@ -3,53 +3,31 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
-import 'package:todo_app/models/form/workspace_form_field_names.dart';
-import 'package:todo_app/models/workspace.dart';
+import 'package:todo_app/models/form/todo_board_form_field_names.dart';
+import 'package:todo_app/models/todo_board.dart';
 
-class WorkspaceForm extends StatefulWidget {
-  const WorkspaceForm({
+class TodoBoardForm extends StatefulWidget {
+  const TodoBoardForm({
     required this.onSubmitForm,
-    this.initialWorkspace,
-    this.onDeleteWorkspace,
+    this.initialTodoBoard,
+    this.onDeleteTodoBoard,
     Key? key,
   }) : super(key: key);
 
-  final void Function(Workspace) onSubmitForm;
-  final void Function()? onDeleteWorkspace;
-  final Workspace? initialWorkspace;
+  final void Function(TodoBoard) onSubmitForm;
+  final void Function()? onDeleteTodoBoard;
+  final TodoBoard? initialTodoBoard;
 
   @override
-  State<WorkspaceForm> createState() => _WorkspaceFormState();
+  State<TodoBoardForm> createState() => _TodoBoardFormState();
 }
 
-class _WorkspaceFormState extends State<WorkspaceForm> {
+class _TodoBoardFormState extends State<TodoBoardForm> {
   final _formKey = GlobalKey<FormBuilderState>();
-
-  void _onSubmitWorkspaceForm(BuildContext context) {
-    if (_formKey.currentState?.saveAndValidate() ?? false) {
-      final fields = _formKey.currentState?.value;
-
-      if (fields != null) {
-        final newWorkspace = Workspace.fromFormFields(fields);
-        final updatedWorkspace = widget.initialWorkspace?.copyWith(
-          name: newWorkspace.name,
-        );
-
-        widget.onSubmitForm(updatedWorkspace ?? newWorkspace);
-      }
-    }
-  }
-
-  void _focusWorkspaceNameFieldWhenBuilt() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _formKey.currentState?.fields[WorkspaceFormFieldNames.name]
-          ?.requestFocus();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    _focusWorkspaceNameFieldWhenBuilt();
+    _focusTodoBoardNameFieldWhenBuilt();
     final theme = context.read<ThemeCubit>().state;
     final textStyle = theme.material.textTheme;
 
@@ -63,11 +41,11 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
             child: Column(
               children: [
                 FormBuilderTextField(
-                  initialValue: widget.initialWorkspace?.name,
+                  initialValue: widget.initialTodoBoard?.name,
                   style: textStyle.bodyText1,
-                  name: WorkspaceFormFieldNames.name,
+                  name: TodoBoardFormFieldNames.name,
                   decoration: InputDecoration(
-                    label: Text('Workspace', style: textStyle.headline3),
+                    label: Text('Todo Board', style: textStyle.headline3),
                   ),
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.next,
@@ -79,9 +57,9 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
           const SizedBox(height: 16),
           Row(
             children: [
-              if (widget.initialWorkspace != null) ...[
+              if (widget.initialTodoBoard != null) ...[
                 ElevatedButton(
-                  onPressed: widget.onDeleteWorkspace,
+                  onPressed: widget.onDeleteTodoBoard,
                   style: ElevatedButton.styleFrom(
                     primary: Colors.red,
                   ),
@@ -95,7 +73,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
               ],
               const Spacer(),
               ElevatedButton(
-                onPressed: () => _onSubmitWorkspaceForm(context),
+                onPressed: () => _onSubmitTodoBoardForm(context),
                 child: Text('OK', style: textStyle.button),
               ),
             ],
@@ -103,5 +81,27 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
         ],
       ),
     );
+  }
+
+  void _onSubmitTodoBoardForm(BuildContext context) {
+    if (_formKey.currentState?.saveAndValidate() ?? false) {
+      final fields = _formKey.currentState?.value;
+
+      if (fields != null) {
+        final newBoard = TodoBoard.fromFormFields(fields);
+        final updatedBoard = widget.initialTodoBoard?.copyWith(
+          name: newBoard.name,
+        );
+
+        widget.onSubmitForm(updatedBoard ?? newBoard);
+      }
+    }
+  }
+
+  void _focusTodoBoardNameFieldWhenBuilt() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _formKey.currentState?.fields[TodoBoardFormFieldNames.name]
+          ?.requestFocus();
+    });
   }
 }

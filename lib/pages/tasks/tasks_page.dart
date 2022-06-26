@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
 import 'package:todo_app/models/task.dart';
-import 'package:todo_app/models/workspace.dart';
+import 'package:todo_app/models/todo_board.dart';
 import 'package:todo_app/pages/page_scaffold.dart';
 import 'package:todo_app/pages/tasks/bloc/task_page_bloc.dart';
 import 'package:todo_app/pages/tasks/tasks_page_presenter.dart';
-import 'package:todo_app/pages/workspace/bloc/workspace_page_body_bloc.dart'
+import 'package:todo_app/pages/todo_board/bloc/todo_board_page_body_bloc.dart'
     as page_body;
-import 'package:todo_app/pages/workspace/workspace_page_body.dart';
+import 'package:todo_app/pages/todo_board/todo_board_page_body.dart';
 import 'package:todo_app/widgets/modal_bottom_sheet.dart';
 
 class TasksPage extends StatefulWidget {
@@ -27,8 +27,8 @@ class _TasksPageState extends State<TasksPage> {
           return _buildLoadSuccess(
             context,
             presenter: state.presenter,
-            workspaces: state.workspaces,
-            workspaceBlocs: state.workspaceBlocs,
+            todoBoards: state.todoBoards,
+            todoBoardBlocs: state.todoBoardBlocs,
           );
         } else {
           return Container();
@@ -40,25 +40,25 @@ class _TasksPageState extends State<TasksPage> {
   Widget _buildLoadSuccess(
     BuildContext context, {
     required TasksPagePresenter presenter,
-    required List<Workspace> workspaces,
-    required List<page_body.WorkspacePageBodyBloc> workspaceBlocs,
+    required List<TodoBoard> todoBoards,
+    required List<page_body.TodoBoardPageBodyBloc> todoBoardBlocs,
   }) {
     return DefaultTabController(
-      length: presenter.workspaces.length,
+      length: presenter.todoBoards.length,
       child: Builder(builder: (context) {
         return PageScaffold(
           appBar: _buildAppBar(
             context,
             presenter: presenter,
-            workspaces: workspaces,
+            todoBoards: todoBoards,
           ),
-          floatingActionButton: workspaces.isNotEmpty
+          floatingActionButton: todoBoards.isNotEmpty
               ? FloatingActionButton(
                   onPressed: () => showTaskFormModalSheet(
                     context,
                     onSubmitForm: (task) => _createNewTask(
                       context,
-                      workspaces: workspaces,
+                      todoBoards: todoBoards,
                       task: task,
                     ),
                   ),
@@ -67,10 +67,10 @@ class _TasksPageState extends State<TasksPage> {
               : null,
           child: TabBarView(
             children: [
-              ...workspaceBlocs.map(
-                (bloc) => _buildWorkSpacePageBody(
+              ...todoBoardBlocs.map(
+                (bloc) => _buildTodoBoardsPageBody(
                   context,
-                  workspaceBloc: bloc,
+                  todoBoardBloc: bloc,
                 ),
               ),
             ],
@@ -83,7 +83,7 @@ class _TasksPageState extends State<TasksPage> {
   AppBar _buildAppBar(
     BuildContext context, {
     required TasksPagePresenter presenter,
-    required List<Workspace> workspaces,
+    required List<TodoBoard> todoBoards,
   }) {
     final theme = context.read<ThemeCubit>().state;
     final textStyle = theme.material.textTheme;
@@ -95,19 +95,19 @@ class _TasksPageState extends State<TasksPage> {
         style: textStyle.headline1,
       ),
       actions: [
-        _buildMenuButton(context, workspaces: workspaces),
+        _buildMenuButton(context, todoBoards: todoBoards),
       ],
-      bottom: workspaces.isNotEmpty
+      bottom: todoBoards.isNotEmpty
           ? PreferredSize(
               preferredSize: const Size.fromHeight(40),
               child: TabBar(
                 isScrollable: true,
                 indicatorColor: Colors.black,
                 tabs: [
-                  ...presenter.workspaces.map(
-                    (workspace) => Tab(
+                  ...presenter.todoBoards.map(
+                    (todoBoard) => Tab(
                       child: Text(
-                        workspace.name,
+                        todoBoard.name,
                         style: textStyle.button,
                       ),
                     ),
@@ -121,7 +121,7 @@ class _TasksPageState extends State<TasksPage> {
 
   Widget _buildMenuButton(
     BuildContext context, {
-    required List<Workspace> workspaces,
+    required List<TodoBoard> todoBoards,
   }) {
     return PopupMenuButton<PopupMenu>(
       padding: const EdgeInsets.only(right: 20),
@@ -129,16 +129,16 @@ class _TasksPageState extends State<TasksPage> {
       onSelected: (menu) => _onSelectedPopupMenuButton(
         context,
         menu: menu,
-        workspaces: workspaces,
+        todoBoards: todoBoards,
       ),
       itemBuilder: (context) => [
         const PopupMenuItem<PopupMenu>(
-          value: PopupMenu.createNewWorkspace,
-          child: Text('New Workspace'),
+          value: PopupMenu.createNewTodoBoard,
+          child: Text('New Todo Board'),
         ),
         const PopupMenuItem<PopupMenu>(
-          value: PopupMenu.editWorkspace,
-          child: Text('Edit Workspace'),
+          value: PopupMenu.editTodoBoard,
+          child: Text('Edit Todo Board'),
         ),
         const PopupMenuItem<PopupMenu>(
           value: PopupMenu.deleteCompletedTasks,
@@ -148,70 +148,70 @@ class _TasksPageState extends State<TasksPage> {
     );
   }
 
-  Widget _buildWorkSpacePageBody(
+  Widget _buildTodoBoardsPageBody(
     BuildContext context, {
-    required page_body.WorkspacePageBodyBloc workspaceBloc,
+    required page_body.TodoBoardPageBodyBloc todoBoardBloc,
   }) {
-    return BlocProvider<page_body.WorkspacePageBodyBloc>.value(
-      value: workspaceBloc,
-      child: const WorkspacePageBody(),
+    return BlocProvider<page_body.TodoBoardPageBodyBloc>.value(
+      value: todoBoardBloc,
+      child: const TodoBoardPageBody(),
     );
   }
 
   void _createNewTask(
     BuildContext context, {
-    required List<Workspace> workspaces,
+    required List<TodoBoard> todoBoards,
     required Task task,
   }) {
     final index = DefaultTabController.of(context)?.index ?? 0;
-    final workspaceId = workspaces[index].id;
+    final boardId = todoBoards[index].id;
     final bloc = context.read<TaskPageBloc>();
 
-    bloc.add(TaskCreatedEvent(workspaceId: workspaceId, task: task));
+    bloc.add(TaskCreatedEvent(boardId: boardId, task: task));
   }
 
   void _onSelectedPopupMenuButton(
     BuildContext context, {
     required PopupMenu menu,
-    required List<Workspace> workspaces,
+    required List<TodoBoard> todoBoards,
   }) {
     final index = DefaultTabController.of(context)?.index ?? 0;
     final bloc = context.read<TaskPageBloc>();
 
     switch (menu) {
-      case PopupMenu.createNewWorkspace:
-        showWorkspaceFormModalSheet(
+      case PopupMenu.createNewTodoBoard:
+        showTodoBoardFormModalSheet(
           context,
-          onSubmitForm: (workspace) => bloc.add(
-            WorkspaceCreatedEvent(workspace: workspace),
+          onSubmitForm: (todoBoard) => bloc.add(
+            TodoBoardCreatedEvent(todoBoard: todoBoard),
           ),
         );
         break;
-      case PopupMenu.editWorkspace:
-        final workspaceId = workspaces[index].id;
+      case PopupMenu.editTodoBoard:
+        final boardId = todoBoards[index].id;
 
-        showWorkspaceFormModalSheet(
+        showTodoBoardFormModalSheet(
           context,
-          initialWorkspace: workspaces[index],
-          onSubmitForm: (workspace) => bloc.add(
-            WorkspaceUpdatedEvent(workspace: workspace),
+          initialTodoBoard: todoBoards[index],
+          onSubmitForm: (todoBoard) => bloc.add(
+            TodoBoardUpdatedEvent(todoBoard: todoBoard),
           ),
-          onDeleteWorkspace: () => bloc.add(
-            WorkspaceDeletedEvent(workspaceId: workspaceId),
+          onDeleteTodoBoard: () => bloc.add(
+            TodoBoardDeletedEvent(boardId: boardId),
           ),
         );
         break;
       case PopupMenu.deleteCompletedTasks:
-        final workspaceId = workspaces[index].id;
+        final boardId = todoBoards[index].id;
 
-        bloc.add(DeleteCompletedTasksRequestedEvent(workspaceId: workspaceId));
+        bloc.add(DeleteCompletedTasksRequestedEvent(boardId: boardId));
         break;
     }
   }
 }
 
 enum PopupMenu {
-  createNewWorkspace,
-  editWorkspace,
+  createNewTodoBoard,
+  editTodoBoard,
   deleteCompletedTasks,
 }

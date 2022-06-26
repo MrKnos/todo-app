@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:todo_app/models/task.dart';
-import 'package:todo_app/models/workspace.dart';
+import 'package:todo_app/models/todo_board.dart';
 
-class WorkspacePagePresenter {
-  WorkspacePagePresenter({
+class TodoBoardPagePresenter {
+  TodoBoardPagePresenter({
     required this.id,
     required this.name,
     required List<TaskPresenter> tasks,
@@ -13,11 +13,11 @@ class WorkspacePagePresenter {
   final String name;
   final List<TaskPresenter> _tasks;
 
-  factory WorkspacePagePresenter.fromModel(Workspace workspace) {
-    return WorkspacePagePresenter(
-      id: workspace.id,
-      name: workspace.name,
-      tasks: workspace.tasks.map(TaskPresenter.fromModel).toList(),
+  factory TodoBoardPagePresenter.fromModel(TodoBoard todoBoard) {
+    return TodoBoardPagePresenter(
+      id: todoBoard.id,
+      name: todoBoard.name,
+      tasks: todoBoard.tasks.map(TaskPresenter.fromModel).toList(),
     );
   }
 

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_app/cubits/theme_cubit.dart';
 import 'package:todo_app/models/task.dart';
-import 'package:todo_app/models/workspace.dart';
+import 'package:todo_app/models/todo_board.dart';
 import 'package:todo_app/widgets/task_form.dart';
-import 'package:todo_app/widgets/workspace_form.dart';
+import 'package:todo_app/widgets/todo_board_form.dart';
 
 void showAppModalBottomSheet(
   BuildContext context, {
@@ -50,23 +50,23 @@ void showAppModalBottomSheet(
   );
 }
 
-void showWorkspaceFormModalSheet(
+void showTodoBoardFormModalSheet(
   BuildContext context, {
-  required void Function(Workspace) onSubmitForm,
-  void Function()? onDeleteWorkspace,
-  Workspace? initialWorkspace,
+  required void Function(TodoBoard) onSubmitForm,
+  void Function()? onDeleteTodoBoard,
+  TodoBoard? initialTodoBoard,
 }) {
   showAppModalBottomSheet(
     context,
     heightFactor: 0.6,
-    child: WorkspaceForm(
-      initialWorkspace: initialWorkspace,
-      onSubmitForm: (workspace) {
-        onSubmitForm(workspace);
+    child: TodoBoardForm(
+      initialTodoBoard: initialTodoBoard,
+      onSubmitForm: (todoBoard) {
+        onSubmitForm(todoBoard);
         Navigator.pop(context);
       },
-      onDeleteWorkspace: () {
-        onDeleteWorkspace?.call();
+      onDeleteTodoBoard: () {
+        onDeleteTodoBoard?.call();
         Navigator.pop(context);
       },
     ),

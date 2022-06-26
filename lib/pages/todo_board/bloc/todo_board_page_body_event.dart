@@ -1,12 +1,12 @@
-part of 'workspace_page_body_bloc.dart';
+part of 'todo_board_page_body_bloc.dart';
 
 @immutable
-abstract class WorkspacePageBodyEvent {}
+abstract class TodoBoardPageBodyEvent {}
 
 class StartedEvent extends _Event {
-  StartedEvent({required this.workspace});
+  StartedEvent({required this.todoBoard});
 
-  final Workspace workspace;
+  final TodoBoard todoBoard;
 }
 
 class TaskCheckedEvent extends _Event {

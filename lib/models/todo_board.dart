@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
-import 'package:todo_app/models/form/workspace_form_field_names.dart';
+import 'package:todo_app/models/form/todo_board_form_field_names.dart';
 import 'package:todo_app/models/task.dart';
 
-class Workspace {
-  Workspace({
+class TodoBoard {
+  TodoBoard({
     required this.id,
     required this.name,
     required this.tasks,
@@ -13,12 +13,12 @@ class Workspace {
   final String name;
   final List<Task> tasks;
 
-  factory Workspace.fromFormFields(Map<String, dynamic> fields) {
-    assert(fields[WorkspaceFormFieldNames.name] != null);
+  factory TodoBoard.fromFormFields(Map<String, dynamic> fields) {
+    assert(fields[TodoBoardFormFieldNames.name] != null);
 
-    return Workspace(
+    return TodoBoard(
       id: DateTime.now().toString(),
-      name: fields[WorkspaceFormFieldNames.name]?.toString() ?? '-',
+      name: fields[TodoBoardFormFieldNames.name]?.toString() ?? '-',
       tasks: [],
     );
   }
@@ -58,12 +58,12 @@ class Workspace {
 
   void removeCompletedTask() => tasks.removeWhere((task) => task.isCompleted);
 
-  Workspace copyWith({
+  TodoBoard copyWith({
     String? id,
     String? name,
     List<Task>? tasks,
   }) {
-    return Workspace(
+    return TodoBoard(
       id: id ?? this.id,
       name: name ?? this.name,
       tasks: tasks ?? this.tasks,
@@ -71,16 +71,16 @@ class Workspace {
   }
 }
 
-extension WorkspacesExtension on List<Workspace> {
-  void upsert({required Workspace workspace}) {
-    final workspaceIndex = indexWhere(
-      (kWorkspace) => kWorkspace.id == workspace.id,
+extension TodoBoardsExtension on List<TodoBoard> {
+  void upsert({required TodoBoard board}) {
+    final boardIndex = indexWhere(
+      (kBoard) => kBoard.id == board.id,
     );
 
-    if (workspaceIndex < 0) {
-      return add(workspace);
+    if (boardIndex < 0) {
+      return add(board);
     } else {
-      replaceRange(workspaceIndex, workspaceIndex + 1, [workspace]);
+      replaceRange(boardIndex, boardIndex + 1, [board]);
     }
   }
 }

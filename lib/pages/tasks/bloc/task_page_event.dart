@@ -7,34 +7,34 @@ class StartedEvent extends _Event {}
 
 class TaskCreatedEvent extends _Event {
   TaskCreatedEvent({
-    required this.workspaceId,
+    required this.boardId,
     required this.task,
   });
 
-  final String workspaceId;
+  final String boardId;
   final Task task;
 }
 
-class WorkspaceCreatedEvent extends _Event {
-  WorkspaceCreatedEvent({required this.workspace});
+class TodoBoardCreatedEvent extends _Event {
+  TodoBoardCreatedEvent({required this.todoBoard});
 
-  final Workspace workspace;
+  final TodoBoard todoBoard;
 }
 
-class WorkspaceUpdatedEvent extends _Event {
-  WorkspaceUpdatedEvent({required this.workspace});
+class TodoBoardUpdatedEvent extends _Event {
+  TodoBoardUpdatedEvent({required this.todoBoard});
 
-  final Workspace workspace;
+  final TodoBoard todoBoard;
 }
 
-class WorkspaceDeletedEvent extends _Event {
-  WorkspaceDeletedEvent({required this.workspaceId});
+class TodoBoardDeletedEvent extends _Event {
+  TodoBoardDeletedEvent({required this.boardId});
 
-  final String workspaceId;
+  final String boardId;
 }
 
 class DeleteCompletedTasksRequestedEvent extends _Event {
-  DeleteCompletedTasksRequestedEvent({required this.workspaceId});
+  DeleteCompletedTasksRequestedEvent({required this.boardId});
 
-  final String workspaceId;
+  final String boardId;
 }
